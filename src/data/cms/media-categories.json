@@ -1,0 +1,18 @@
+{
+  "root": "robot-cafe",
+  "categories": [
+    { "key": "hero", "folder": "robot-cafe/hero", "description": "Homepage and page hero imagery" },
+    { "key": "gallery", "folder": "robot-cafe/gallery", "description": "Restaurant, food, interior, and social gallery images" },
+    { "key": "menu", "folder": "robot-cafe/menu", "description": "Food and beverage item photography" },
+    { "key": "offers", "folder": "robot-cafe/offers", "description": "Offer cards and offer banners" },
+    { "key": "promotions", "folder": "robot-cafe/promotions", "description": "General promotional campaigns" },
+    { "key": "events", "folder": "robot-cafe/events", "description": "Events, group dining, private occasions" },
+    { "key": "holidays", "folder": "robot-cafe/holidays", "description": "Parent folder for holiday campaigns" },
+    { "key": "valentines", "folder": "robot-cafe/holidays/valentines", "description": "Valentine's campaigns" },
+    { "key": "mothers-day", "folder": "robot-cafe/holidays/mothers-day", "description": "Mother's Day campaigns" },
+    { "key": "fathers-day", "folder": "robot-cafe/holidays/fathers-day", "description": "Father's Day campaigns" },
+    { "key": "christmas", "folder": "robot-cafe/holidays/christmas", "description": "Christmas campaigns" },
+    { "key": "easter", "folder": "robot-cafe/holidays/easter", "description": "Easter campaigns" },
+    { "key": "school-holiday", "folder": "robot-cafe/holidays/school-holiday", "description": "School holiday campaigns" }
+  ]
+}

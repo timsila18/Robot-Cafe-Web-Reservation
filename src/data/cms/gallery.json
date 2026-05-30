@@ -1,0 +1,47 @@
+{
+  "categories": ["All", "Interior", "Food", "Robots", "Events", "Holidays"],
+  "images": [
+    {
+      "id": "premium-dining-room",
+      "title": "Premium dining room",
+      "category": "Interior",
+      "featured": true,
+      "media": { "publicId": "robot-cafe/gallery/premium-dining-room", "fallbackKey": "dining" }
+    },
+    {
+      "id": "signature-coffee-bar",
+      "title": "Signature coffee bar",
+      "category": "Interior",
+      "featured": false,
+      "media": { "publicId": "robot-cafe/gallery/coffee-bar", "fallbackKey": "coffee" }
+    },
+    {
+      "id": "chef-plated-dish",
+      "title": "Chef plated bistro dish",
+      "category": "Food",
+      "featured": true,
+      "media": { "publicId": "robot-cafe/gallery/signature-plate", "fallbackKey": "plates" }
+    },
+    {
+      "id": "dessert-gold-finish",
+      "title": "Dessert and gold finish",
+      "category": "Food",
+      "featured": false,
+      "media": { "publicId": "robot-cafe/gallery/dessert", "fallbackKey": "dessert" }
+    },
+    {
+      "id": "birthday-event",
+      "title": "Birthday celebration setup",
+      "category": "Events",
+      "featured": false,
+      "media": { "publicId": "robot-cafe/events/birthday-setup", "fallbackKey": "event" }
+    },
+    {
+      "id": "holiday-campaign",
+      "title": "Holiday campaign dining",
+      "category": "Holidays",
+      "featured": false,
+      "media": { "publicId": "robot-cafe/holidays/christmas/dining", "fallbackKey": "holiday" }
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "events": [
+    {
+      "id": "birthday-dining",
+      "title": "Birthday Dining",
+      "description": "Premium tables, dessert moments, and group dining support.",
+      "category": "events",
+      "active": true,
+      "media": { "publicId": "robot-cafe/events/birthday-dining", "fallbackKey": "event" }
+    },
+    {
+      "id": "business-lunch",
+      "title": "Business Lunch",
+      "description": "A refined lunch experience for teams, founders, and client meetings.",
+      "category": "events",
+      "active": true,
+      "media": { "publicId": "robot-cafe/events/business-lunch", "fallbackKey": "dining" }
+    }
+  ]
+}

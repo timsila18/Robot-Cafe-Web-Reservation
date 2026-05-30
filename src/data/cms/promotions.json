@@ -1,0 +1,121 @@
+{
+  "promotions": [
+    {
+      "id": "sushi-platter-offer",
+      "title": "Sushi Platter",
+      "description": "Indulge in our premium sushi platter, crafted by expert chefs.",
+      "startDate": "2026-05-01",
+      "endDate": "2026-05-31",
+      "banner": { "publicId": "robot-cafe/offers/sushi-platter", "fallbackKey": "plates" },
+      "category": "offers",
+      "cta": { "label": "Order Now", "href": "/menu" },
+      "badge": "20% OFF",
+      "featured": true,
+      "active": true
+    },
+    {
+      "id": "steak-night",
+      "title": "Steak Night",
+      "description": "Enjoy 15% off premium steak dishes every Friday.",
+      "startDate": "2026-05-01",
+      "endDate": "2026-12-31",
+      "banner": { "publicId": "robot-cafe/offers/steak-night", "fallbackKey": "dining" },
+      "category": "offers",
+      "cta": { "label": "Book a Table", "href": "/reservations" },
+      "badge": "15% OFF",
+      "featured": true,
+      "active": true
+    },
+    {
+      "id": "mothers-day-2026",
+      "title": "Mother's Day Dining",
+      "description": "Celebrate Mum with a curated family dining package and dessert moment.",
+      "startDate": "2026-05-01",
+      "endDate": "2026-05-10",
+      "banner": { "publicId": "robot-cafe/holidays/mothers-day/mothers-day-2026", "fallbackKey": "holiday" },
+      "category": "mothers-day",
+      "cta": { "label": "Reserve Now", "href": "/reservations" },
+      "badge": "HOLIDAY",
+      "featured": true,
+      "active": true
+    },
+    {
+      "id": "valentines-dinner",
+      "title": "Valentine's Robot Dinner",
+      "description": "A futuristic date-night menu with premium seating and signature drinks.",
+      "startDate": "2026-02-01",
+      "endDate": "2026-02-14",
+      "banner": { "publicId": "robot-cafe/holidays/valentines/valentines-dinner", "fallbackKey": "dining" },
+      "category": "valentines",
+      "cta": { "label": "Plan Ahead", "href": "/reservations" },
+      "badge": "SEASONAL",
+      "featured": false,
+      "active": false
+    },
+    {
+      "id": "school-holiday-family",
+      "title": "School Holiday Family Treat",
+      "description": "Family dining bundles, kids favorites, and ice cream specials.",
+      "startDate": "2026-08-01",
+      "endDate": "2026-08-31",
+      "banner": { "publicId": "robot-cafe/holidays/school-holiday/family-treat", "fallbackKey": "dessert" },
+      "category": "school-holiday",
+      "cta": { "label": "View Offer", "href": "/offers" },
+      "badge": "FAMILY",
+      "featured": false,
+      "active": true
+    },
+    {
+      "id": "fathers-day-grill-2026",
+      "title": "Father's Day Grill Table",
+      "description": "Premium grilled mains, family-style sides, and a reservation-first Father's Day experience.",
+      "startDate": "2026-06-10",
+      "endDate": "2026-06-21",
+      "banner": { "publicId": "robot-cafe/holidays/fathers-day/grill-table-2026", "fallbackKey": "dining" },
+      "category": "fathers-day",
+      "cta": { "label": "Book Father's Day", "href": "/reservations" },
+      "badge": "FAMILY",
+      "featured": true,
+      "active": true
+    },
+    {
+      "id": "easter-robot-platter-2027",
+      "title": "Easter Robotic Platter",
+      "description": "A shareable Easter package for families, friends, and group celebrations.",
+      "startDate": "2027-03-15",
+      "endDate": "2027-04-05",
+      "banner": { "publicId": "robot-cafe/holidays/easter/robotic-platter", "fallbackKey": "holiday" },
+      "category": "easter",
+      "cta": { "label": "View Easter Package", "href": "/offers" },
+      "badge": "EASTER",
+      "featured": false,
+      "active": true
+    },
+    {
+      "id": "christmas-future-feast",
+      "title": "Christmas Future Feast",
+      "description": "Festive dining, event-ready tables, and premium holiday hospitality for December celebrations.",
+      "startDate": "2026-12-01",
+      "endDate": "2026-12-31",
+      "banner": { "publicId": "robot-cafe/holidays/christmas/future-feast", "fallbackKey": "holiday" },
+      "category": "christmas",
+      "cta": { "label": "Plan Christmas", "href": "/reservations" },
+      "badge": "HOLIDAY",
+      "featured": false,
+      "active": true
+    },
+    {
+      "id": "coffee-time",
+      "title": "Coffee Time",
+      "description": "Buy any coffee and get another one free. Perfect for everyday cafe visits.",
+      "startDate": "2026-05-01",
+      "endDate": "2026-12-31",
+      "banner": { "publicId": "robot-cafe/offers/coffee-time", "fallbackKey": "coffee" },
+      "category": "offers",
+      "cta": { "label": "Order Now", "href": "/menu" },
+      "badge": "BUY 1 GET 1",
+      "featured": true,
+      "active": true
+    }
+  ]
+}
