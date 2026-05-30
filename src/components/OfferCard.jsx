@@ -8,7 +8,7 @@ export default function OfferCard({ offer, index }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.55, delay: index * 0.08 }}
-      className="glass-panel premium-ring overflow-hidden rounded-3xl transition hover:-translate-y-2"
+      className="glass-panel premium-ring premium-card-hover overflow-hidden rounded-3xl transition hover:-translate-y-2"
     >
       <div className="aspect-[4/3] overflow-hidden bg-robot-navy">
         <img src={offer.image} alt={offer.title} loading="lazy" className="h-full w-full object-cover transition duration-700 hover:scale-105" />

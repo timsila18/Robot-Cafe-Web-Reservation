@@ -27,8 +27,9 @@ body {
   min-width: 320px;
   overflow-x: hidden;
   background:
-    radial-gradient(circle at top left, rgba(10, 132, 255, 0.16), transparent 32rem),
-    linear-gradient(180deg, #050b12 0%, #0b1320 48%, #050b12 100%);
+    radial-gradient(circle at 12% 0%, rgba(10, 132, 255, 0.22), transparent 32rem),
+    radial-gradient(circle at 82% 8%, rgba(212, 175, 55, 0.12), transparent 30rem),
+    linear-gradient(180deg, #020914 0%, #050b12 42%, #0b1320 72%, #050b12 100%);
   color: #ffffff;
   font-family: Inter, system-ui, sans-serif;
 }
@@ -139,8 +140,10 @@ img {
 
 .glass-panel {
   border: 1px solid rgba(217, 226, 236, 0.14);
-  background: linear-gradient(145deg, rgba(11, 19, 32, 0.84), rgba(5, 11, 18, 0.62));
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.26);
+  background:
+    linear-gradient(145deg, rgba(11, 19, 32, 0.88), rgba(5, 11, 18, 0.66)),
+    radial-gradient(circle at top left, rgba(10, 132, 255, 0.08), transparent 22rem);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.32);
   backdrop-filter: blur(18px);
 }
 
@@ -162,6 +165,51 @@ img {
   border-radius: inherit;
   background: linear-gradient(135deg, rgba(10, 132, 255, 0.5), rgba(212, 175, 55, 0.38), rgba(217, 226, 236, 0.08));
   opacity: 0.75;
+}
+
+.luxury-surface {
+  position: relative;
+  isolation: isolate;
+}
+
+.luxury-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(circle at center, black, transparent 72%);
+  opacity: 0.45;
+}
+
+.section-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #d4af37;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.section-kicker::before {
+  content: "";
+  width: 3rem;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0a84ff, #d4af37);
+}
+
+.premium-card-hover {
+  transform: translateZ(0);
+}
+
+.premium-card-hover:hover {
+  box-shadow: 0 34px 100px rgba(10, 132, 255, 0.16), 0 20px 70px rgba(0, 0, 0, 0.32);
 }
 
 .focus-ring {
