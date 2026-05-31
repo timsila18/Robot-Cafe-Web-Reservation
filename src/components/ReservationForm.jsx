@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import PremiumButton from "./PremiumButton";
 import { siteConfig } from "../config/site";
 import { saveReservationRequest } from "../utils/reservations";
+import { persistReservationRequest } from "../services/reservationService";
 
 export default function ReservationForm({ compact = false }) {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ export default function ReservationForm({ compact = false }) {
     setStep(2);
   }
 
-  function onSubmit(data) {
+  async function onSubmit(data) {
     const branch = siteConfig.branches.find((item) => item.id === data.branchId) || siteConfig.branches[0];
     const confirmationNumber = `RC-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
     const reservation = {
@@ -48,6 +49,11 @@ export default function ReservationForm({ compact = false }) {
     };
 
     saveReservationRequest(reservation);
+    try {
+      await persistReservationRequest(reservation);
+    } catch (error) {
+      console.warn(error);
+    }
     navigate("/reservations/confirmation", { state: { reservation } });
   }
 

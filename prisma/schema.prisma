@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  REJECTED
+  CANCELLED
+  CANCELLATION_REQUESTED
+  MODIFICATION_REQUESTED
+}
+
+model Branch {
+  id                    String        @id
+  name                  String
+  shortName             String
+  address               String
+  reservationInbox      String
+  reservationRoutingLabel String
+  diaryPlaceName        String?
+  active                Boolean       @default(true)
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  reservations          Reservation[]
+
+  @@map("branches")
+}
+
+model Customer {
+  id           String        @id @default(cuid())
+  firstName    String
+  lastName     String
+  phone        String
+  email        String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  reservations Reservation[]
+
+  @@unique([email, phone])
+  @@map("customers")
+}
+
+model Reservation {
+  id                 String            @id @default(cuid())
+  confirmationNumber String            @unique
+  branchId           String
+  customerId         String?
+  guests             Int
+  date               DateTime
+  selectedTime       String
+  status             ReservationStatus @default(PENDING)
+  preferences        String[]          @default([])
+  notes              String?
+  source             String            @default("website")
+  routingInbox       String
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  branch             Branch            @relation(fields: [branchId], references: [id])
+  customer           Customer?         @relation(fields: [customerId], references: [id])
+
+  @@index([branchId, status, date])
+  @@index([confirmationNumber])
+  @@map("reservations")
+}
