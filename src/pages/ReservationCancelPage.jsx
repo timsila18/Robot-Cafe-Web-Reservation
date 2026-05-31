@@ -25,6 +25,8 @@ export default function ReservationCancelPage() {
             <p><strong className="text-white">Date:</strong> {reservation.date}</p>
             <p className="mt-2"><strong className="text-white">Time:</strong> {reservation.selectedTime}</p>
             <p className="mt-2"><strong className="text-white">Guests:</strong> {reservation.guests}</p>
+            <p className="mt-2"><strong className="text-white">Branch:</strong> {reservation.branch?.shortName || reservation.branchName || "Robot Cafe"}</p>
+            <p className="mt-2"><strong className="text-white">Address:</strong> {reservation.branchAddress || reservation.branch?.address || "Robot Cafe"}</p>
           </div>
           <PremiumButton type="button" variant={cancelled ? "secondary" : "gold"} className="mt-8" onClick={requestCancellation}>
             {cancelled ? "Cancellation Requested" : "Request Cancellation"}

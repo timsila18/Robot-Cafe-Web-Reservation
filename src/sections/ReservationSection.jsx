@@ -1,6 +1,7 @@
 import ReservationForm from "../components/ReservationForm";
 import SectionHeading from "../components/SectionHeading";
 import { CalendarClock, Pencil, ShieldCheck, XCircle } from "lucide-react";
+import { siteConfig } from "../config/site";
 
 export default function ReservationSection() {
   const actions = [
@@ -14,6 +15,15 @@ export default function ReservationSection() {
       <div className="mx-auto max-w-7xl">
         <div className="mb-10">
           <SectionHeading align="left" title="Reservations" subtitle="Select guests, date, and time first, then provide your details, matching the booking flow guests already know." />
+        </div>
+        <div className="mb-8 grid gap-4 md:grid-cols-2">
+          {siteConfig.branches.map((branch) => (
+            <div key={branch.id} className="luxury-border rounded-3xl p-5">
+              <p className="text-sm font-black uppercase tracking-[0.18em] text-robot-gold">Robot Cafe branch</p>
+              <h2 className="mt-2 font-display text-2xl font-bold text-white">{branch.shortName}</h2>
+              <p className="mt-2 text-robot-muted">{branch.address}</p>
+            </div>
+          ))}
         </div>
         <div className="mb-8 grid gap-4 md:grid-cols-3">
           {actions.map(({ icon: Icon, title, text, href }) => (

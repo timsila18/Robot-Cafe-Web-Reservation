@@ -1,11 +1,31 @@
 export const siteConfig = {
-  name: "Robot Cafe & Bistro",
+  name: "Robot Cafe",
   phone: "0769 30 30 30",
   phoneIntl: "+254 769 303030",
   email: "info@robotcafe.co.ke",
-  address: "Lana plaza, Oloitoktok Rd, Nairobi",
+  address: "Lana Plaza, Oloitoktok Rd, Nairobi",
   openingHours: "Mon - Sun, 7:30 AM - 10 PM",
   whatsappUrl: "https://wa.me/254769303030",
+  branches: [
+    {
+      id: "lana-plaza",
+      name: "Robot Cafe - Lana Plaza",
+      shortName: "Lana Plaza",
+      address: "Lana Plaza, Oloitoktok Rd, Nairobi",
+      reservationInbox: "reservations@robotcafe.co.ke",
+      reservationRoutingLabel: "Lana Plaza reservation desk",
+      diaryPlaceName: "Robot Cafe - Lana Plaza",
+    },
+    {
+      id: "imaara-mall",
+      name: "Robot Cafe - Imaara Mall",
+      shortName: "Imaara Mall",
+      address: "Ground Floor, Imaara Mall along Mombasa Road",
+      reservationInbox: "imaara.reservations@robotcafe.co.ke",
+      reservationRoutingLabel: "Imaara Mall reservation desk",
+      diaryPlaceName: "Robot Cafe - Imaara Mall",
+    },
+  ],
   navItems: [
     { label: "Offers", path: "/offers" },
     { label: "Our Menu", path: "/menu" },

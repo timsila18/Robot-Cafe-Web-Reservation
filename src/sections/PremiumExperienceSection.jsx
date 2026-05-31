@@ -10,7 +10,7 @@ const moments = [
   },
   {
     icon: Martini,
-    title: "Bistro craft",
+    title: "Cafe craft",
     text: "Signature plates, polished drinks, desserts, and seasonal menus managed from one content system.",
   },
   {

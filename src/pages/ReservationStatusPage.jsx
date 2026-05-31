@@ -28,6 +28,8 @@ export default function ReservationStatusPage() {
             <p className="mt-4 text-sm font-bold uppercase tracking-[0.18em] text-robot-muted">Current Status</p>
             <p className="mt-2 font-display text-3xl font-bold text-white">{reservation.status}</p>
             <p className="mt-3 text-robot-silver">Confirmation: {lookup || reservation.confirmationNumber}</p>
+            <p className="mt-2 text-robot-silver">Branch: {reservation.branch?.shortName || reservation.branchName || "Robot Cafe"}</p>
+            <p className="mt-2 text-robot-silver">Reservation desk: {reservation.reservationInbox || "reservations@robotcafe.co.ke"}</p>
           </div>
         </div>
       </div>

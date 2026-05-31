@@ -28,7 +28,7 @@ export default function HeroSection() {
             Welcome to
           </p>
           <h1 className="font-display text-5xl font-extrabold leading-[0.94] tracking-tight text-white [text-shadow:0_8px_40px_rgba(0,0,0,0.75)] sm:text-7xl lg:text-8xl">
-            ROBOT CAFE <span className="block text-robot-blue">& BISTRO</span>
+            ROBOT <span className="block text-robot-blue">CAFE</span>
           </h1>
           <p className="mt-7 max-w-xl text-lg leading-8 text-robot-silver [text-shadow:0_4px_24px_rgba(0,0,0,0.8)]">
             Experience the future of dining where innovation meets exceptional cuisine.

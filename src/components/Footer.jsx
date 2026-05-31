@@ -10,7 +10,7 @@ export default function Footer() {
         <div>
           <BrandLogo imageClassName="h-12" />
           <p className="mt-4 max-w-md leading-8 text-white">
-            <strong>RobotCafe</strong> - Where cutting-edge technology meets warm hospitality for a seamless dining experience at Lana Plaza, Oloitoktok Rd, Kileleshwa.
+            <strong>Robot Cafe</strong> - Where cutting-edge technology meets warm hospitality across Lana Plaza and Imaara Mall.
           </p>
           <div className="mt-8 flex gap-3">
             <a className="grid h-11 w-11 place-items-center rounded-full bg-white text-robot-blue transition hover:bg-robot-blue hover:text-white" href="#" aria-label="Instagram">
@@ -52,7 +52,7 @@ export default function Footer() {
         <div>
           <h3 className="font-display text-3xl font-bold text-white">Contact us</h3>
           <div className="mt-8 grid gap-5 text-white">
-            <span className="flex items-center gap-3"><MapPin className="h-5 w-5 text-robot-blue" />{siteConfig.address}</span>
+            <span className="flex items-start gap-3"><MapPin className="mt-1 h-5 w-5 shrink-0 text-robot-blue" />{siteConfig.branches.map((branch) => `${branch.shortName}: ${branch.address}`).join(" | ")}</span>
             <span className="flex items-center gap-3"><Phone className="h-5 w-5 text-robot-blue" />{siteConfig.phone}</span>
             <span className="flex items-center gap-3"><Mail className="h-5 w-5 text-robot-blue" />{siteConfig.email}</span>
             <p className="pt-5 font-extrabold text-robot-gold">Open Hours:</p>
@@ -74,7 +74,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="border-t border-white/10 px-5 py-5 text-center text-xs text-robot-muted">
-        &copy; 2026 Robot Cafe & Bistro. Premium evolution foundation.
+        &copy; 2026 Robot Cafe. Premium evolution foundation.
       </div>
     </footer>
   );

@@ -14,7 +14,7 @@ export default function AboutPreviewSection() {
           transition={{ duration: 0.65 }}
         >
           <span className="section-kicker mb-5">About Robot Cafe</span>
-          <SectionHeading align="left" title="Redefining dining for the future." subtitle="Robot Cafe & Bistro blends cutting-edge service technology with warm hospitality, exceptional food, and a memorable dining atmosphere." />
+          <SectionHeading align="left" title="Redefining dining for the future." subtitle="Robot Cafe blends cutting-edge service technology with warm hospitality, exceptional food, and a memorable dining atmosphere." />
           <p className="mt-7 leading-8 text-robot-muted">
             From everyday coffee moments to birthdays, family meals, and premium dinner reservations, the experience stays simple, welcoming, and unmistakably Robot Cafe.
           </p>

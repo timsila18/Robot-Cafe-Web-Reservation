@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import PremiumButton from "./PremiumButton";
+import { siteConfig } from "../config/site";
+import { saveReservationRequest } from "../utils/reservations";
 
 export default function ReservationForm({ compact = false }) {
   const navigate = useNavigate();
@@ -14,19 +16,29 @@ export default function ReservationForm({ compact = false }) {
     formState: { errors },
     trigger,
     getValues,
+    watch,
   } = useForm({
-    defaultValues: { guests: "2" },
+    defaultValues: { guests: "2", branchId: siteConfig.branches[0].id },
   });
+  const selectedBranchId = watch("branchId");
+  const selectedBranch = siteConfig.branches.find((branch) => branch.id === selectedBranchId) || siteConfig.branches[0];
 
   async function continueToGuestInfo() {
-    await trigger(["guests", "date"]);
+    const valid = await trigger(["branchId", "guests", "date"]);
+    if (!valid) return;
     setStep(2);
   }
 
   function onSubmit(data) {
-    const confirmationNumber = `RCB-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
+    const branch = siteConfig.branches.find((item) => item.id === data.branchId) || siteConfig.branches[0];
+    const confirmationNumber = `RC-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
     const reservation = {
       ...data,
+      branch,
+      branchName: branch.name,
+      branchAddress: branch.address,
+      reservationInbox: branch.reservationInbox,
+      reservationRoutingLabel: branch.reservationRoutingLabel,
       date: data.date || "Pending host confirmation",
       selectedTime,
       preferences: selectedPreferences,
@@ -35,7 +47,7 @@ export default function ReservationForm({ compact = false }) {
       createdAt: new Date().toISOString(),
     };
 
-    localStorage.setItem("robotCafeLatestReservation", JSON.stringify(reservation));
+    saveReservationRequest(reservation);
     navigate("/reservations/confirmation", { state: { reservation } });
   }
 
@@ -72,7 +84,8 @@ export default function ReservationForm({ compact = false }) {
     "Window Seating",
     "Quiet Seating",
   ];
-  const availableSlots = timeSlots.filter((_, index) => index !== 2).length;
+  const blockedSlotIndex = selectedBranch.id === "imaara-mall" ? 5 : 2;
+  const availableSlots = timeSlots.filter((_, index) => index !== blockedSlotIndex).length;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="glass-panel rounded-3xl p-5 sm:p-8">
@@ -89,11 +102,11 @@ export default function ReservationForm({ compact = false }) {
           <div className="mt-6 grid gap-4 rounded-3xl border border-robot-blue/20 bg-robot-blue/10 p-5 text-sm text-robot-silver sm:grid-cols-3">
             <div>
               <p className="font-extrabold text-white">Availability</p>
-              <p className="mt-1">{availableSlots} time slots available today</p>
+              <p className="mt-1">{availableSlots} time slots available at {selectedBranch.shortName}</p>
             </div>
             <div>
-              <p className="font-extrabold text-white">Peak guidance</p>
-              <p className="mt-1">Evening and weekend tables fill fastest.</p>
+              <p className="font-extrabold text-white">Reservation routing</p>
+              <p className="mt-1">Requests go to the {selectedBranch.reservationRoutingLabel}.</p>
             </div>
             <div>
               <p className="font-extrabold text-white">Selected time</p>
@@ -101,6 +114,19 @@ export default function ReservationForm({ compact = false }) {
             </div>
           </div>
           <div className="mt-8 grid gap-5">
+            <label className="grid min-w-0 gap-2 text-sm font-semibold text-robot-silver">
+              Branch *
+              <select className={inputClass} {...register("branchId", { required: true })}>
+                {siteConfig.branches.map((branch) => (
+                  <option key={branch.id} value={branch.id} className="bg-robot-navy">
+                    {branch.shortName} - {branch.address}
+                  </option>
+                ))}
+              </select>
+              <span className="text-xs font-semibold text-robot-muted">
+                Choose Lana Plaza or Imaara Mall so the request is sent to the correct branch.
+              </span>
+            </label>
             <label className="grid min-w-0 gap-2 text-sm font-semibold text-robot-silver">
               Number of Guests *
               <select className={inputClass} {...register("guests")}>
@@ -118,26 +144,26 @@ export default function ReservationForm({ compact = false }) {
             </label>
             <div>
               <p className="text-sm font-semibold text-robot-silver">Time Slot *</p>
-              <p className="mt-2 font-semibold text-white">Robot Cafe:</p>
+              <p className="mt-2 font-semibold text-white">{selectedBranch.name}:</p>
               <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
                 {timeSlots.map((slot, index) => (
                   <button
                     type="button"
                     key={slot}
-                    disabled={index === 2}
+                    disabled={index === blockedSlotIndex}
                     onClick={() => setSelectedTime(slot)}
                     className={`focus-ring rounded-xl px-4 py-4 text-sm font-extrabold transition ${
                       selectedTime === slot
                         ? "bg-robot-blue text-white shadow-glow"
-                        : index === 2
+                        : index === blockedSlotIndex
                           ? "cursor-not-allowed bg-white/10 text-robot-muted"
                           : "bg-sky-300/80 text-white hover:bg-robot-blue"
                     }`}
-                    title={index === 2 ? "This time is fully booked" : undefined}
+                    title={index === blockedSlotIndex ? "This time is fully booked" : undefined}
                   >
                     <span className="block">{slot}</span>
                     <span className="mt-1 block text-[0.68rem] uppercase tracking-[0.16em] opacity-80">
-                      {index === 2 ? "Fully booked" : selectedTime === slot ? "Selected" : "Available"}
+                      {index === blockedSlotIndex ? "Fully booked" : selectedTime === slot ? "Selected" : "Available"}
                     </span>
                   </button>
                 ))}
@@ -152,6 +178,7 @@ export default function ReservationForm({ compact = false }) {
         <div>
           <h3 className="font-display text-3xl font-extrabold text-white sm:text-4xl">Step 2: Guest Information</h3>
           <div className="mt-4 grid gap-3 rounded-3xl border border-white/10 bg-white/5 p-5 text-sm text-robot-silver sm:grid-cols-3">
+            <p><span className="font-extrabold text-white">Branch:</span> {selectedBranch.shortName}</p>
             <p><span className="font-extrabold text-white">Guests:</span> {getValues("guests")}</p>
             <p><span className="font-extrabold text-white">Date:</span> {getValues("date") || "Not selected"}</p>
             <p><span className="font-extrabold text-white">Time:</span> {selectedTime}</p>
