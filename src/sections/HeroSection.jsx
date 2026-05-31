@@ -9,6 +9,8 @@ const trustItems = [
   { value: "Future dining", label: "Robotic hospitality" },
 ];
 
+const miniBadges = ["Reservations", "Online orders", "Seasonal offers"];
+
 export default function HeroSection() {
   return (
     <section id="home" className="luxury-surface relative overflow-hidden">
@@ -31,6 +33,13 @@ export default function HeroSection() {
           <p className="mt-7 max-w-xl text-lg leading-8 text-robot-silver [text-shadow:0_4px_24px_rgba(0,0,0,0.8)]">
             Experience the future of dining where innovation meets exceptional cuisine.
           </p>
+          <div className="mt-7 flex flex-wrap gap-3">
+            {miniBadges.map((badge) => (
+              <span key={badge} className="rounded-full border border-white/15 bg-white/[0.07] px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-robot-silver backdrop-blur">
+                {badge}
+              </span>
+            ))}
+          </div>
           <div className="mt-10 flex flex-col gap-4 sm:flex-row">
             <PremiumButton as="a" href="/menu" variant="gold" className="sm:min-w-72">
               Order Online
