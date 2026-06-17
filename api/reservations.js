@@ -1,25 +1,5 @@
 import { prisma } from "./_prisma.js";
-
-const branchSeeds = [
-  {
-    id: "lana-plaza",
-    name: "Robot Cafe - Lana Plaza",
-    shortName: "Lana Plaza",
-    address: "Lana Plaza, Oloitoktok Rd, Nairobi",
-    reservationInbox: "reservations@robotcafe.co.ke",
-    reservationRoutingLabel: "Lana Plaza reservation desk",
-    diaryPlaceName: "Robot Cafe - Lana Plaza",
-  },
-  {
-    id: "imaara-mall",
-    name: "Robot Cafe - Imaara Mall",
-    shortName: "Imaara Mall",
-    address: "Ground Floor, Imaara Mall along Mombasa Road",
-    reservationInbox: "imaara.reservations@robotcafe.co.ke",
-    reservationRoutingLabel: "Imaara Mall reservation desk",
-    diaryPlaceName: "Robot Cafe - Imaara Mall",
-  },
-];
+import { ensureBranches } from "./_branches.js";
 
 function parseReservationDate(value) {
   if (!value) return null;
@@ -40,18 +20,6 @@ function normalizeStatus(value) {
   return map[value] || "PENDING";
 }
 
-async function ensureBranches() {
-  await Promise.all(
-    branchSeeds.map((branch) =>
-      prisma.branch.upsert({
-        where: { id: branch.id },
-        update: branch,
-        create: branch,
-      })
-    )
-  );
-}
-
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -68,7 +36,7 @@ export default async function handler(req, res) {
       return;
     }
 
-    await ensureBranches();
+    await ensureBranches(prisma);
 
     const branchId = payload.branchId || payload.branch?.id || "lana-plaza";
     const reservationDate = parseReservationDate(payload.date);

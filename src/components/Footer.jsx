@@ -27,6 +27,7 @@ export default function Footer() {
             {[
               { label: "Our Menu", path: "/menu" },
               { label: "Make a reservation", path: "/reservations" },
+              { label: "Customer survey", path: "/survey" },
               { label: "Reviews", path: "/reviews" },
             ].map((item) => (
               <NavLink key={item.path} to={item.path} className="rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-white transition hover:border-robot-blue hover:bg-robot-blue">

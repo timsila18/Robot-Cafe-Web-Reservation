@@ -3,6 +3,8 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import SiteLayout from "../layouts/SiteLayout";
 import AboutPage from "../pages/AboutPage";
 import AccountPage from "../pages/AccountPage";
+import AdminLoginPage from "../pages/AdminLoginPage";
+import AdminSurveysPage from "../pages/AdminSurveysPage";
 import ContactPage from "../pages/ContactPage";
 import GalleryPage from "../pages/GalleryPage";
 import HomePage from "../pages/HomePage";
@@ -16,6 +18,7 @@ import ReservationConfirmationPage from "../pages/ReservationConfirmationPage";
 import ReservationStatusPage from "../pages/ReservationStatusPage";
 import ReservationModifyPage from "../pages/ReservationModifyPage";
 import ReservationCancelPage from "../pages/ReservationCancelPage";
+import SurveyPage from "../pages/SurveyPage";
 
 export default function AppRoutes() {
   const location = useLocation();
@@ -40,6 +43,9 @@ export default function AppRoutes() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/account" element={<AccountPage />} />
           <Route path="/my-account" element={<AccountPage />} />
+          <Route path="/survey" element={<SurveyPage />} />
+          <Route path="/admin/login" element={<AdminLoginPage />} />
+          <Route path="/admin/surveys" element={<AdminSurveysPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </AnimatePresence>
