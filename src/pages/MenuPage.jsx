@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import MenuCard from "../components/MenuCard";
 import PremiumButton from "../components/PremiumButton";
 import SectionHeading from "../components/SectionHeading";
-import { getFeaturedDishes, getMenuCategories, getMenuItems, getPopularDishes, getSignatureDishes } from "../services/contentService";
+import { useMenuContent } from "../hooks/useMenuContent";
 
 const filterOptions = [
   { key: "all", label: "All dishes" },
@@ -40,8 +40,10 @@ export default function MenuPage() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
   const [type, setType] = useState("all");
-  const categories = getMenuCategories();
-  const items = getMenuItems();
+  const { categories, items, status } = useMenuContent();
+  const featuredDishes = items.filter((item) => item.featured);
+  const popularDishes = items.filter((item) => item.popular);
+  const signatureDishes = items.filter((item) => item.signature);
 
   const filteredItems = useMemo(() => {
     return items.filter((item) => {
@@ -60,7 +62,7 @@ export default function MenuPage() {
             <SectionHeading
               align="left"
               title="Our Menu"
-              subtitle="The familiar Robot Cafe menu journey, now upgraded with search, categories, signature picks, and Cloudinary-ready dish imagery."
+              subtitle={status === "loaded" ? "Live Robot Cafe menu content, upgraded with search, categories, signature picks, and premium dish imagery." : "The familiar Robot Cafe menu journey, now upgraded with search, categories, signature picks, and premium dish imagery."}
             />
             <div className="glass-panel rounded-3xl p-5">
               <label className="text-sm font-bold uppercase tracking-[0.18em] text-robot-muted" htmlFor="menu-search">
@@ -80,9 +82,9 @@ export default function MenuPage() {
           </div>
 
           <div className="mt-10 grid gap-5 lg:grid-cols-3">
-            <DishStrip title="Featured Dishes" icon={Sparkles} items={getFeaturedDishes()} />
-            <DishStrip title="Popular Dishes" icon={Star} items={getPopularDishes()} />
-            <DishStrip title="Signature Dishes" icon={Trophy} items={getSignatureDishes()} />
+            <DishStrip title="Featured Dishes" icon={Sparkles} items={featuredDishes} />
+            <DishStrip title="Popular Dishes" icon={Star} items={popularDishes} />
+            <DishStrip title="Signature Dishes" icon={Trophy} items={signatureDishes} />
           </div>
         </div>
       </section>

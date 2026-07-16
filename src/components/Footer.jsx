@@ -54,7 +54,7 @@ export default function Footer() {
           <h3 className="font-display text-3xl font-bold text-white">Contact us</h3>
           <div className="mt-8 grid gap-5 text-white">
             <span className="flex items-start gap-3"><MapPin className="mt-1 h-5 w-5 shrink-0 text-robot-blue" />{siteConfig.branches.map((branch) => `${branch.shortName}: ${branch.address}`).join(" | ")}</span>
-            <span className="flex items-center gap-3"><Phone className="h-5 w-5 text-robot-blue" />{siteConfig.phone}</span>
+            <span className="flex items-start gap-3"><Phone className="mt-1 h-5 w-5 shrink-0 text-robot-blue" />{siteConfig.branches.map((branch) => `${branch.shortName}: ${branch.phone}`).join(" | ")}</span>
             <span className="flex items-center gap-3"><Mail className="h-5 w-5 text-robot-blue" />{siteConfig.email}</span>
             <p className="pt-5 font-extrabold text-robot-gold">Open Hours:</p>
             <p>{siteConfig.openingHours}</p>

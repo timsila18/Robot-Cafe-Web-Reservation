@@ -2,14 +2,14 @@ import { useMemo, useState } from "react";
 import MenuCard from "../components/MenuCard";
 import PremiumButton from "../components/PremiumButton";
 import SectionHeading from "../components/SectionHeading";
-import { menuCategories, menuItems } from "../data/menu";
+import { useMenuContent } from "../hooks/useMenuContent";
 
 export default function MenuPreviewSection() {
   const [activeCategory, setActiveCategory] = useState("All");
-  const categories = ["All", ...menuCategories];
+  const { categories, items } = useMenuContent();
   const filteredItems = useMemo(
-    () => (activeCategory === "All" ? menuItems : menuItems.filter((item) => item.category === activeCategory)),
-    [activeCategory]
+    () => (activeCategory === "All" ? items : items.filter((item) => item.category === activeCategory)),
+    [activeCategory, items]
   );
 
   return (
@@ -37,7 +37,7 @@ export default function MenuPreviewSection() {
           ))}
         </div>
         <div className="mt-9 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {filteredItems.map((item, index) => (
+          {filteredItems.slice(0, 8).map((item, index) => (
             <MenuCard key={item.title} item={item} index={index} />
           ))}
         </div>

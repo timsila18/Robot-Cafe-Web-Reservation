@@ -37,7 +37,7 @@ export default function ReservationSection() {
         <div className="mb-8 rounded-3xl border border-robot-gold/20 bg-robot-gold/10 p-5 text-robot-silver">
           <CalendarClock className="h-6 w-6 text-robot-gold" />
           <p className="mt-3 text-sm font-semibold">
-            For urgent table support, use the floating WhatsApp button or call 0769 30 30 30.
+            For urgent table support, use the floating WhatsApp button or call Lana Plaza on 0769 30 30 30 or Imaara Mall on 0140 30 30 30.
           </p>
         </div>
         <ReservationForm />

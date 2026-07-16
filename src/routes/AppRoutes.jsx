@@ -3,7 +3,9 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import SiteLayout from "../layouts/SiteLayout";
 import AboutPage from "../pages/AboutPage";
 import AccountPage from "../pages/AccountPage";
+import AdminHomePage from "../pages/AdminHomePage";
 import AdminLoginPage from "../pages/AdminLoginPage";
+import AdminMenuPage from "../pages/AdminMenuPage";
 import AdminSurveysPage from "../pages/AdminSurveysPage";
 import ContactPage from "../pages/ContactPage";
 import GalleryPage from "../pages/GalleryPage";
@@ -44,7 +46,9 @@ export default function AppRoutes() {
           <Route path="/account" element={<AccountPage />} />
           <Route path="/my-account" element={<AccountPage />} />
           <Route path="/survey" element={<SurveyPage />} />
+          <Route path="/admin" element={<AdminHomePage />} />
           <Route path="/admin/login" element={<AdminLoginPage />} />
+          <Route path="/admin/menu" element={<AdminMenuPage />} />
           <Route path="/admin/surveys" element={<AdminSurveysPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

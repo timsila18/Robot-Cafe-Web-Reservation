@@ -5,10 +5,11 @@ import ThemeToggle from "./ThemeToggle";
 
 export default function HeaderTopBar({ theme, onToggleTheme }) {
   const branchSummary = "Lana Plaza | Imaara Mall, Mombasa Road";
+  const phoneSummary = siteConfig.branches.map((branch) => `${branch.shortName}: ${branch.phone}`).join(" | ");
   const items = [
     { icon: Mail, label: "Email:", text: siteConfig.email },
     { icon: MapPin, label: "Branches", text: branchSummary },
-    { icon: Phone, label: "Call Us:", text: siteConfig.phone },
+    { icon: Phone, label: "Call Us:", text: phoneSummary },
     { icon: Clock, label: "Open Hours:", text: siteConfig.openingHours },
   ];
 

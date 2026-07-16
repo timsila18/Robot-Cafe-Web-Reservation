@@ -31,3 +31,28 @@ export async function fetchSurveyDashboard(token) {
   if (!response.ok) throw new Error(data.error || "Unable to load survey dashboard.");
   return data;
 }
+
+export async function fetchAdminMenu(token) {
+  const response = await fetch("/api/admin/menu", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || "Unable to load menu content.");
+  return data;
+}
+
+export async function saveAdminMenu(token, payload) {
+  const response = await fetch("/api/admin/menu", {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || "Unable to save menu content.");
+  return data;
+}

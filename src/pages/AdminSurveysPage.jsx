@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { AlertTriangle, BarChart3, LogOut, Star, TrendingUp, Users } from "lucide-react";
+import { AlertTriangle, ArrowLeft, BarChart3, LogOut, Star, TrendingUp, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { fetchSurveyDashboard } from "../services/surveyService";
@@ -71,6 +71,10 @@ export default function AdminSurveysPage() {
       <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="mx-auto max-w-7xl">
         <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
+            <Link to="/admin" className="inline-flex items-center gap-2 text-sm font-bold text-robot-blue">
+              <ArrowLeft className="h-4 w-4" />
+              Back to admin
+            </Link>
             <p className="section-kicker">Robot Cafe admin</p>
             <h1 className="mt-4 font-display text-4xl font-bold text-white md:text-6xl">Customer survey intelligence</h1>
             <p className="mt-4 max-w-3xl leading-8 text-robot-muted">

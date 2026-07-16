@@ -20,6 +20,8 @@ model Branch {
   name                  String
   shortName             String
   address               String
+  phone                 String?
+  phoneIntl             String?
   reservationInbox      String
   reservationRoutingLabel String
   diaryPlaceName        String?
@@ -96,4 +98,13 @@ model SurveyResponse {
   @@index([branchId, createdAt])
   @@index([createdAt])
   @@map("survey_responses")
+}
+
+model CmsContent {
+  key       String   @id
+  content   Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("cms_content")
 }

@@ -12,7 +12,7 @@ export const faqs = [
   {
     question: "Can I modify or cancel my reservation?",
     answer:
-      "Yes. Use the reservation page links or contact the team on 0769 30 30 30 for changes.",
+      "Yes. Use the reservation page links or contact Lana Plaza on 0769 30 30 30 or Imaara Mall on 0140 30 30 30 for changes.",
   },
   {
     question: "Do you support online orders?",

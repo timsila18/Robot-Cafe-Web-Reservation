@@ -1,9 +1,12 @@
 import MenuCard from "../components/MenuCard";
 import PremiumButton from "../components/PremiumButton";
 import SectionHeading from "../components/SectionHeading";
-import { menuItems } from "../data/menu";
+import { useMenuContent } from "../hooks/useMenuContent";
 
 export default function SignatureDishesSection() {
+  const { items } = useMenuContent();
+  const signatureItems = items.filter((item) => item.signature || item.featured).slice(0, 5);
+
   return (
     <section id="menu" className="luxury-surface border-y border-white/10 bg-robot-navy/72 px-5 py-24 lg:px-6 light:border-slate-200 light:bg-slate-50">
       <div className="mx-auto max-w-7xl">
@@ -21,7 +24,7 @@ export default function SignatureDishesSection() {
           </PremiumButton>
         </div>
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
-          {menuItems.map((item, index) => (
+          {signatureItems.map((item, index) => (
             <MenuCard key={item.title} item={item} index={index} />
           ))}
         </div>

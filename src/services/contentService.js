@@ -22,6 +22,14 @@ function isInDateRange(item, referenceDate = today) {
 
 function withImage(record, mediaKey = "media", transform = "card") {
   const media = record[mediaKey] || record.media || record.banner;
+  if (record.imageUrl) {
+    return {
+      ...record,
+      image: record.imageUrl,
+      src: record.imageUrl,
+    };
+  }
+
   return {
     ...record,
     image: mediaFromRecord(media, media?.fallbackKey || "plates", transform),
@@ -43,6 +51,16 @@ export function getMenuCategories() {
 
 export function getMenuItems() {
   return menuContent.items.filter((item) => item.active !== false).map((item) => withImage(item, "media")).sort(byTitle);
+}
+
+export function normalizeMenuContent(content = menuContent) {
+  const categories = Array.isArray(content.categories) && content.categories.length ? content.categories : menuContent.categories;
+  const items = Array.isArray(content.items) ? content.items : menuContent.items;
+  return {
+    ...content,
+    categories,
+    items: items.filter((item) => item.active !== false).map((item) => withImage(item, "media")).sort(byTitle),
+  };
 }
 
 export function getFeaturedDishes() {

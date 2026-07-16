@@ -19,7 +19,7 @@ export default function AdminLoginPage() {
     try {
       const token = await adminLogin(email.trim().toLowerCase(), password);
       localStorage.setItem("robotCafeAdminToken", token);
-      navigate("/admin/surveys");
+      navigate("/admin");
     } catch (loginError) {
       setError(loginError.message);
       setStatus("idle");
