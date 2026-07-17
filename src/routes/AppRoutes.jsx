@@ -6,7 +6,9 @@ import AccountPage from "../pages/AccountPage";
 import AdminHomePage from "../pages/AdminHomePage";
 import AdminLoginPage from "../pages/AdminLoginPage";
 import AdminMenuPage from "../pages/AdminMenuPage";
+import AdminReservationsPage from "../pages/AdminReservationsPage";
 import AdminSurveysPage from "../pages/AdminSurveysPage";
+import AdminUsersPage from "../pages/AdminUsersPage";
 import ContactPage from "../pages/ContactPage";
 import GalleryPage from "../pages/GalleryPage";
 import HomePage from "../pages/HomePage";
@@ -49,7 +51,9 @@ export default function AppRoutes() {
           <Route path="/admin" element={<AdminHomePage />} />
           <Route path="/admin/login" element={<AdminLoginPage />} />
           <Route path="/admin/menu" element={<AdminMenuPage />} />
+          <Route path="/admin/reservations" element={<AdminReservationsPage />} />
           <Route path="/admin/surveys" element={<AdminSurveysPage />} />
+          <Route path="/admin/users" element={<AdminUsersPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </AnimatePresence>

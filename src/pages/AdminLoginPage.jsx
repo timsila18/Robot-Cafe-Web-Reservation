@@ -17,9 +17,10 @@ export default function AdminLoginPage() {
     setStatus("submitting");
 
     try {
-      const token = await adminLogin(email.trim().toLowerCase(), password);
+      const { token, user } = await adminLogin(email.trim().toLowerCase(), password);
       localStorage.setItem("robotCafeAdminToken", token);
-      navigate("/admin");
+      localStorage.setItem("robotCafeStaffUser", JSON.stringify(user));
+      navigate(user?.role === "hostess" ? "/admin/reservations" : "/admin");
     } catch (loginError) {
       setError(loginError.message);
       setStatus("idle");
@@ -37,10 +38,10 @@ export default function AdminLoginPage() {
         <div className="grid h-14 w-14 place-items-center rounded-full bg-robot-blue text-white shadow-glow">
           <ShieldCheck className="h-7 w-7" />
         </div>
-        <p className="mt-6 section-kicker">Admin access</p>
-        <h1 className="mt-4 font-display text-4xl font-bold text-white">Survey insights login</h1>
+        <p className="mt-6 section-kicker">Staff access</p>
+        <h1 className="mt-4 font-display text-4xl font-bold text-white">Robot Cafe control room</h1>
         <p className="mt-4 leading-7 text-robot-muted">
-          View branch feedback, customer sentiment, and recommended actions for Robot Cafe.
+          Admins manage menu, surveys, branches, and staff. Hostesses process reservations for their assigned branch.
         </p>
 
         <label className="mt-8 block">

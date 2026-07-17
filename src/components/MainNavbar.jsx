@@ -1,4 +1,4 @@
-import { Menu, Share2, X } from "lucide-react";
+import { Menu, Share2, UserRoundCog, X } from "lucide-react";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { siteConfig } from "../config/site";
@@ -32,6 +32,18 @@ export default function MainNavbar({ theme, onToggleTheme }) {
         </div>
 
         <div className="hidden items-stretch lg:flex">
+          <NavLink
+            to="/my-account"
+            className={({ isActive }) =>
+              `focus-ring grid w-14 place-items-center border-l border-white/10 text-white/70 transition hover:bg-white/10 hover:text-white light:text-slate-700 ${
+                isActive ? "bg-white/10 text-white light:bg-slate-100" : ""
+              }`
+            }
+            aria-label="Staff account"
+            title="Staff account"
+          >
+            <UserRoundCog className="h-5 w-5" />
+          </NavLink>
           <button className="focus-ring grid w-20 place-items-center bg-[#0d5788] text-white" aria-label="Share Robot Cafe">
             <Share2 className="h-6 w-6" />
           </button>
@@ -58,6 +70,9 @@ export default function MainNavbar({ theme, onToggleTheme }) {
             ))}
             <NavLink to="/reservations" onClick={() => setOpen(false)} className="rounded-xl bg-robot-blue px-4 py-3 text-sm font-bold text-white">
               Make a reservation
+            </NavLink>
+            <NavLink to="/my-account" onClick={() => setOpen(false)} className="rounded-xl px-4 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white/60 hover:bg-white/10 hover:text-white">
+              Staff login
             </NavLink>
           </div>
         </div>

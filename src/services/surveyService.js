@@ -19,7 +19,7 @@ export async function adminLogin(email, password) {
 
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(data.error || "Unable to sign in.");
-  return data.token;
+  return data;
 }
 
 export async function fetchSurveyDashboard(token) {
@@ -55,4 +55,29 @@ export async function saveAdminMenu(token, payload) {
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(data.error || "Unable to save menu content.");
   return data;
+}
+
+export async function fetchAdminReservations(token) {
+  const response = await fetch("/api/admin/reservations", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || "Unable to load reservations.");
+  return data;
+}
+
+export async function updateReservationStatus(token, reservationId, status, notes) {
+  const response = await fetch("/api/admin/reservations", {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ reservationId, status, notes }),
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || "Unable to update reservation.");
+  return data.reservation;
 }

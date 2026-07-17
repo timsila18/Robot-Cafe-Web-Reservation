@@ -20,7 +20,7 @@ const emptyItem = {
 
 function tokenOrRedirect(navigate) {
   const token = localStorage.getItem("robotCafeAdminToken");
-  if (!token) navigate("/admin/login");
+  if (!token) navigate("/my-account");
   return token;
 }
 
