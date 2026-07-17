@@ -54,6 +54,16 @@ export default function MenuPage() {
     });
   }, [category, items, query, type]);
 
+  const groupedItems = useMemo(() => {
+    return categories
+      .filter((item) => item !== "All")
+      .map((groupCategory) => ({
+        category: groupCategory,
+        items: filteredItems.filter((item) => item.category === groupCategory),
+      }))
+      .filter((group) => group.items.length);
+  }, [categories, filteredItems]);
+
   return (
     <main>
       <section className="border-b border-white/10 bg-robot-night px-5 py-20 lg:px-6">
@@ -120,9 +130,22 @@ export default function MenuPage() {
             </div>
           </div>
 
-          <div className="mt-9 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredItems.map((item, index) => (
-              <MenuCard key={item.id} item={item} index={index} />
+          <div className="mt-9 space-y-14">
+            {groupedItems.map((group) => (
+              <section key={group.category} className="scroll-mt-32" id={`category-${group.category.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}>
+                <div className="mb-6 flex flex-col gap-2 border-b border-white/10 pb-4 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <p className="section-kicker">Menu category</p>
+                    <h2 className="mt-3 font-display text-3xl font-bold text-white">{group.category}</h2>
+                  </div>
+                  <p className="text-sm font-bold uppercase tracking-[0.16em] text-robot-muted">{group.items.length} selections</p>
+                </div>
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {group.items.map((item, index) => (
+                    <MenuCard key={item.id} item={item} index={index} />
+                  ))}
+                </div>
+              </section>
             ))}
           </div>
 

@@ -18,7 +18,7 @@ export default function MenuCard({ item, index }) {
           <span className="shrink-0 text-sm font-bold text-robot-gold">{item.price}</span>
         </div>
         <p className="mt-2 text-sm font-semibold uppercase tracking-[0.18em] text-robot-blue">{item.category}</p>
-        {item.branchName ? <p className="mt-2 text-xs font-black uppercase tracking-[0.18em] text-robot-gold">{item.branchName}</p> : null}
+        {item.availableLabel || item.branchName ? <p className="mt-2 text-xs font-black uppercase tracking-[0.18em] text-robot-gold">{item.availableLabel || item.branchName}</p> : null}
         <p className="mt-4 leading-7 text-robot-muted">{item.description}</p>
       </div>
     </motion.article>

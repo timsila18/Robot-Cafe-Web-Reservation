@@ -21,12 +21,32 @@ function primaryImage(item) {
   return primary?.cardUrl || primary?.detailUrl || primary?.imageUrl || item.imageUrl || "";
 }
 
+function branchName(branchSlug) {
+  return branchSlug === "imaara-mall" ? "Imaara Mall" : "Lana Plaza";
+}
+
+function itemIdentity(item) {
+  return [
+    item.title,
+    item.category,
+    item.price,
+  ]
+    .map((part) =>
+      String(part || "")
+        .toLowerCase()
+        .replace(/&/g, "and")
+        .replace(/[^a-z0-9]+/g, " ")
+        .trim()
+    )
+    .join("|");
+}
+
 function mapQrItem(item, categoriesById, branchSlug) {
   const category = categoriesById.get(item.categoryId);
   const categoryName = category?.name || "Menu";
 
   return {
-    id: `${branchSlug}-${item.id || item.slug || item.name}`,
+    id: item.id || item.slug || item.name,
     sourceId: item.id,
     title: item.name,
     category: categoryName,
@@ -44,10 +64,52 @@ function mapQrItem(item, categoriesById, branchSlug) {
     active: item.isActive !== false && item.isSoldOut !== true,
     soldOut: Boolean(item.isSoldOut),
     branchSlug,
-    branchName: branchSlug === "imaara-mall" ? "Imaara Mall" : "Lana Plaza",
+    branchName: branchName(branchSlug),
+    availableBranches: [branchSlug],
+    availableBranchNames: [branchName(branchSlug)],
+    availableLabel: `Available in ${branchName(branchSlug)}`,
     imageUrl: primaryImage(item),
     media: { publicId: "", fallbackKey: "plates" },
   };
+}
+
+function mergeDuplicateItems(items) {
+  const merged = new Map();
+
+  for (const item of items) {
+    const key = itemIdentity(item);
+    const existing = merged.get(key);
+
+    if (!existing) {
+      merged.set(key, {
+        ...item,
+        id: key,
+      });
+      continue;
+    }
+
+    const availableBranches = Array.from(new Set([...(existing.availableBranches || []), ...(item.availableBranches || [])]));
+    const availableBranchNames = Array.from(new Set([...(existing.availableBranchNames || []), ...(item.availableBranchNames || [])]));
+
+    merged.set(key, {
+      ...existing,
+      popular: existing.popular || item.popular,
+      featured: existing.featured || item.featured,
+      signature: existing.signature || item.signature,
+      tags: Array.from(new Set([...(existing.tags || []), ...(item.tags || [])])),
+      imageUrl: existing.imageUrl || item.imageUrl,
+      availableBranches,
+      availableBranchNames,
+      branchSlug: availableBranches.join(","),
+      branchName: availableBranchNames.join(" + "),
+      availableLabel:
+        availableBranchNames.length > 1
+          ? `Available in ${availableBranchNames.slice(0, -1).join(", ")} and ${availableBranchNames.slice(-1)}`
+          : `Available in ${availableBranchNames[0]}`,
+    });
+  }
+
+  return Array.from(merged.values()).sort((a, b) => a.category.localeCompare(b.category) || a.title.localeCompare(b.title));
 }
 
 async function fetchBranchMenu(branchSlug) {
@@ -82,7 +144,7 @@ export async function getQrMenuContent() {
   }
 
   const categories = Array.from(new Set(["All", ...successful.flatMap((entry) => entry.categories)]));
-  const items = successful.flatMap((entry) => entry.items).filter((item) => item.active !== false);
+  const items = mergeDuplicateItems(successful.flatMap((entry) => entry.items).filter((item) => item.active !== false));
 
   return {
     source: "robot-cafe-qr-platform",
