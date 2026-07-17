@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { siteConfig } from "../config/site";
@@ -12,6 +12,8 @@ export default function ReservationForm({ compact = false }) {
   const [selectedPreferences, setSelectedPreferences] = useState([]);
   const [stepError, setStepError] = useState("");
   const [submitError, setSubmitError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submissionRef = useRef({ inFlight: false, confirmationNumber: "" });
   const [reservationDetails, setReservationDetails] = useState({
     branchId: siteConfig.branches[0].id,
     guests: "2",
@@ -56,7 +58,10 @@ export default function ReservationForm({ compact = false }) {
 
   async function onSubmit(data) {
     const branch = siteConfig.branches.find((item) => item.id === data.branchId) || siteConfig.branches[0];
-    const confirmationNumber = `RC-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
+    const confirmationNumber =
+      submissionRef.current.confirmationNumber ||
+      `RC-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
+    submissionRef.current.confirmationNumber = confirmationNumber;
     const reservation = {
       ...data,
       branch,
@@ -87,6 +92,7 @@ export default function ReservationForm({ compact = false }) {
   }
 
   async function submitReservationFromForm() {
+    if (submissionRef.current.inFlight) return;
     setSubmitError("");
     const form = document.querySelector("[data-reservation-form]");
     const field = (name) => form?.querySelector(`[name='${name}']`)?.value?.trim() || getValues(name) || "";
@@ -106,7 +112,16 @@ export default function ReservationForm({ compact = false }) {
       return;
     }
 
-    await onSubmit(data);
+    submissionRef.current.inFlight = true;
+    setIsSubmitting(true);
+    try {
+      await onSubmit(data);
+    } catch (error) {
+      console.warn(error);
+      submissionRef.current.inFlight = false;
+      setIsSubmitting(false);
+      setSubmitError("We could not complete the reservation request. Please check your connection and try again.");
+    }
   }
 
   function togglePreference(preference) {
@@ -304,9 +319,10 @@ export default function ReservationForm({ compact = false }) {
             <button
               type="button"
               onClick={submitReservationFromForm}
-              className="focus-ring inline-flex items-center justify-center rounded-full bg-robot-blue px-6 py-3 text-sm font-black uppercase tracking-[0.14em] text-white shadow-glow transition hover:-translate-y-0.5 hover:bg-[#2d96ff]"
+              disabled={isSubmitting}
+              className="focus-ring inline-flex items-center justify-center rounded-full bg-robot-blue px-6 py-3 text-sm font-black uppercase tracking-[0.14em] text-white shadow-glow transition hover:-translate-y-0.5 hover:bg-[#2d96ff] disabled:cursor-wait disabled:opacity-60 disabled:hover:translate-y-0"
             >
-              Make a reservation request
+              {isSubmitting ? "Submitting..." : "Make a reservation request"}
             </button>
             <button type="button" onClick={() => setStep(1)} className="focus-ring rounded-full px-5 py-3 text-sm font-bold text-robot-silver hover:bg-white/10">
               Back
