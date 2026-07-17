@@ -19,8 +19,8 @@ const adminCards = [
     roles: ["admin"],
   },
   {
-    title: "Menu Manager",
-    description: "Update dishes, prices, categories, featured items, and availability.",
+    title: "Menu Viewer",
+    description: "Review the live QR-fed customer menu, categories, prices, and branch availability.",
     href: "/admin/menu",
     icon: BookOpenText,
     roles: ["admin"],

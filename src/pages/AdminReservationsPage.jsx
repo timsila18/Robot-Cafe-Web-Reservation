@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowLeft, CalendarDays, CheckCircle2, Loader2, MapPin, RefreshCw, XCircle } from "lucide-react";
+import { ArrowLeft, CalendarDays, CheckCircle2, Loader2, LogOut, MapPin, RefreshCw, XCircle } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { fetchAdminReservations, updateReservationStatus } from "../services/surveyService";
@@ -80,6 +80,12 @@ export default function AdminReservationsPage() {
     }
   };
 
+  const logout = () => {
+    localStorage.removeItem("robotCafeAdminToken");
+    localStorage.removeItem("robotCafeStaffUser");
+    navigate("/my-account");
+  };
+
   const visibleTitle = staff?.role === "hostess" ? `${staff.branchName} Reservations` : "All Branch Reservations";
 
   return (
@@ -97,10 +103,16 @@ export default function AdminReservationsPage() {
               Confirm, reject, cancel, and monitor Robot Cafe booking requests from one secure staff view.
             </p>
           </div>
-          <button onClick={loadReservations} className="focus-ring inline-flex items-center justify-center gap-2 rounded-full border border-white/10 px-5 py-3 text-sm font-black text-white hover:border-robot-blue">
-            <RefreshCw className="h-4 w-4" />
-            Refresh
-          </button>
+          <div className="flex flex-wrap gap-3">
+            <button onClick={loadReservations} className="focus-ring inline-flex items-center justify-center gap-2 rounded-full border border-white/10 px-5 py-3 text-sm font-black text-white hover:border-robot-blue">
+              <RefreshCw className="h-4 w-4" />
+              Refresh
+            </button>
+            <button onClick={logout} className="focus-ring inline-flex items-center justify-center gap-2 rounded-full border border-white/10 px-5 py-3 text-sm font-black text-white hover:border-robot-blue">
+              <LogOut className="h-4 w-4" />
+              Logout
+            </button>
+          </div>
         </div>
 
         {error ? <p className="mt-6 rounded-2xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-100">{error}</p> : null}

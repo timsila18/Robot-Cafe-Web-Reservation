@@ -1,22 +1,8 @@
 import { motion } from "framer-motion";
-import { ArrowLeft, Plus, Save, Trash2 } from "lucide-react";
+import { ArrowLeft, BookOpenText, ExternalLink, LogOut, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { fetchAdminMenu, saveAdminMenu } from "../services/surveyService";
 import { cn } from "../utils/cn";
-
-const emptyItem = {
-  title: "",
-  category: "Main Course",
-  price: "KES ",
-  description: "",
-  featured: false,
-  popular: false,
-  signature: false,
-  active: true,
-  tags: [],
-  media: { publicId: "", fallbackKey: "plates" },
-};
 
 function tokenOrRedirect(navigate) {
   const token = localStorage.getItem("robotCafeAdminToken");
@@ -24,18 +10,37 @@ function tokenOrRedirect(navigate) {
   return token;
 }
 
+function logout(navigate) {
+  localStorage.removeItem("robotCafeAdminToken");
+  localStorage.removeItem("robotCafeStaffUser");
+  navigate("/my-account");
+}
+
+async function fetchLiveMenu() {
+  const response = await fetch("/api/content/menu");
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || "Unable to load live menu.");
+  return data;
+}
+
+function branchLabel(item) {
+  const labels = item.branchLabels || item.branches || item.availableBranches || [];
+  if (!labels.length) return "Available where listed in QR menu";
+  return `Available in ${labels.join(" and ")}`;
+}
+
 export default function AdminMenuPage() {
   const navigate = useNavigate();
-  const [content, setContent] = useState({ categories: ["All"], seasonalMenus: [], items: [] });
+  const [content, setContent] = useState({ categories: ["All"], items: [] });
   const [status, setStatus] = useState("loading");
-  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
-    const token = tokenOrRedirect(navigate);
-    if (!token) return;
+    if (!tokenOrRedirect(navigate)) return;
 
-    fetchAdminMenu(token)
+    fetchLiveMenu()
       .then((menu) => {
         setContent(menu);
         setStatus("loaded");
@@ -46,52 +51,31 @@ export default function AdminMenuPage() {
       });
   }, [navigate]);
 
-  const categoriesText = useMemo(() => (content.categories || []).join(", "), [content.categories]);
+  const categories = useMemo(() => {
+    const derived = (content.items || []).map((item) => item.category).filter(Boolean);
+    return Array.from(new Set(["All", ...(content.categories || []), ...derived]));
+  }, [content]);
 
-  const updateCategories = (value) => {
-    setContent((current) => ({
-      ...current,
-      categories: value.split(",").map((item) => item.trim()).filter(Boolean),
-    }));
-  };
+  const visibleItems = useMemo(() => {
+    const search = query.trim().toLowerCase();
+    return (content.items || []).filter((item) => {
+      const categoryMatch = activeCategory === "All" || item.category === activeCategory;
+      const queryMatch = !search || [item.title, item.price, item.category, item.description, branchLabel(item)].join(" ").toLowerCase().includes(search);
+      return categoryMatch && queryMatch;
+    });
+  }, [activeCategory, content.items, query]);
 
-  const updateItem = (index, key, value) => {
-    setContent((current) => ({
-      ...current,
-      items: current.items.map((item, itemIndex) => (itemIndex === index ? { ...item, [key]: value } : item)),
-    }));
-  };
-
-  const toggleItem = (index, key) => updateItem(index, key, !content.items[index][key]);
-
-  const addItem = () => {
-    setContent((current) => ({ ...current, items: [{ ...emptyItem }, ...current.items] }));
-  };
-
-  const removeItem = (index) => {
-    setContent((current) => ({ ...current, items: current.items.filter((_, itemIndex) => itemIndex !== index) }));
-  };
-
-  const save = async () => {
-    const token = tokenOrRedirect(navigate);
-    if (!token) return;
-
-    setError("");
-    setMessage("");
-    setStatus("saving");
-    try {
-      const saved = await saveAdminMenu(token, content);
-      setContent(saved);
-      setMessage("Menu saved. Public menu is now updated.");
-      setStatus("loaded");
-    } catch (saveError) {
-      setError(saveError.message);
-      setStatus("loaded");
-    }
-  };
+  const groupedItems = useMemo(() => {
+    return visibleItems.reduce((groups, item) => {
+      const key = item.category || "Uncategorized";
+      groups[key] = groups[key] || [];
+      groups[key].push(item);
+      return groups;
+    }, {});
+  }, [visibleItems]);
 
   if (status === "loading") {
-    return <section className="px-5 py-24 text-center text-robot-muted">Loading menu manager...</section>;
+    return <section className="px-5 py-24 text-center text-robot-muted">Loading live QR menu...</section>;
   }
 
   return (
@@ -103,78 +87,80 @@ export default function AdminMenuPage() {
               <ArrowLeft className="h-4 w-4" />
               Back to admin
             </Link>
-            <h1 className="mt-4 font-display text-4xl font-bold text-white md:text-6xl">Menu Manager</h1>
+            <p className="mt-6 section-kicker">QR menu viewer</p>
+            <h1 className="mt-4 font-display text-4xl font-bold text-white md:text-6xl">Live Menu</h1>
             <p className="mt-4 max-w-3xl leading-8 text-robot-muted">
-              Update live dishes, prices, categories, status, and premium menu highlights.
+              This is a read-only view of the customer menu currently drawn from the Robot Cafe QR menu source.
             </p>
           </div>
-          <div className="flex gap-3">
-            <button onClick={addItem} className="focus-ring inline-flex items-center gap-2 rounded-full border border-white/10 px-5 py-3 text-sm font-black text-white hover:border-robot-blue">
-              <Plus className="h-4 w-4" />
-              Add Dish
-            </button>
-            <button onClick={save} disabled={status === "saving"} className="focus-ring inline-flex items-center gap-2 rounded-full bg-robot-blue px-5 py-3 text-sm font-black text-white shadow-glow disabled:opacity-60">
-              <Save className="h-4 w-4" />
-              {status === "saving" ? "Saving..." : "Save Menu"}
+          <div className="flex flex-wrap gap-3">
+            <a href="/menu" target="_blank" rel="noreferrer" className="focus-ring inline-flex items-center justify-center gap-2 rounded-full border border-white/10 px-5 py-3 text-sm font-black text-white hover:border-robot-blue">
+              <ExternalLink className="h-4 w-4" />
+              Public Menu
+            </a>
+            <button onClick={() => logout(navigate)} className="focus-ring inline-flex items-center justify-center gap-2 rounded-full border border-white/10 px-5 py-3 text-sm font-black text-white hover:border-robot-blue">
+              <LogOut className="h-4 w-4" />
+              Logout
             </button>
           </div>
         </div>
 
-        {message ? <p className="mt-6 rounded-2xl border border-emerald-400/30 bg-emerald-500/10 px-4 py-3 text-sm font-bold text-emerald-100">{message}</p> : null}
         {error ? <p className="mt-6 rounded-2xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-100">{error}</p> : null}
 
-        <div className="mt-8 glass-panel rounded-[2rem] p-5">
-          <label className="block text-sm font-black uppercase tracking-[0.18em] text-robot-muted">Categories</label>
-          <input
-            value={categoriesText}
-            onChange={(event) => updateCategories(event.target.value)}
-            className="focus-ring mt-3 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-white"
-            placeholder="All, Appetizers, Main Course, Desserts"
-          />
+        <div className="mt-8 grid gap-4 rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 lg:grid-cols-[1fr_auto] lg:items-center">
+          <label className="relative block">
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-robot-muted" />
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search dish, price, branch, or category"
+              className="focus-ring w-full rounded-2xl border border-white/10 bg-robot-night/70 py-4 pl-12 pr-4 text-white"
+            />
+          </label>
+          <div className="flex items-center gap-3 rounded-2xl border border-robot-blue/20 bg-robot-blue/10 px-4 py-3 text-sm font-bold text-robot-silver">
+            <BookOpenText className="h-5 w-5 text-robot-blue" />
+            {visibleItems.length} of {(content.items || []).length} dishes
+          </div>
         </div>
 
-        <div className="mt-6 grid gap-5">
-          {content.items.map((item, index) => (
-            <article key={`${item.id || item.title}-${index}`} className={cn("rounded-[2rem] border p-5", item.active === false ? "border-white/10 bg-white/[0.025] opacity-70" : "border-white/10 bg-white/[0.04]")}>
-              <div className="grid gap-4 lg:grid-cols-[1.3fr_0.8fr_0.65fr_auto]">
-                <label>
-                  <span className="text-xs font-black uppercase tracking-[0.16em] text-robot-muted">Dish name</span>
-                  <input value={item.title || ""} onChange={(event) => updateItem(index, "title", event.target.value)} className="focus-ring mt-2 w-full rounded-2xl border border-white/10 bg-robot-night/70 px-4 py-3 text-white" />
-                </label>
-                <label>
-                  <span className="text-xs font-black uppercase tracking-[0.16em] text-robot-muted">Category</span>
-                  <input value={item.category || ""} onChange={(event) => updateItem(index, "category", event.target.value)} className="focus-ring mt-2 w-full rounded-2xl border border-white/10 bg-robot-night/70 px-4 py-3 text-white" />
-                </label>
-                <label>
-                  <span className="text-xs font-black uppercase tracking-[0.16em] text-robot-muted">Price</span>
-                  <input value={item.price || ""} onChange={(event) => updateItem(index, "price", event.target.value)} className="focus-ring mt-2 w-full rounded-2xl border border-white/10 bg-robot-night/70 px-4 py-3 text-white" />
-                </label>
-                <button onClick={() => removeItem(index)} className="focus-ring mt-6 inline-flex h-12 items-center justify-center rounded-2xl border border-red-400/30 px-4 text-red-200 hover:bg-red-500/10" aria-label="Remove dish">
-                  <Trash2 className="h-5 w-5" />
-                </button>
+        <div className="mt-5 flex gap-2 overflow-x-auto pb-2">
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => setActiveCategory(category)}
+              className={cn(
+                "focus-ring shrink-0 rounded-full border px-4 py-2 text-sm font-black transition",
+                activeCategory === category ? "border-robot-blue bg-robot-blue text-white shadow-glow" : "border-white/10 bg-white/5 text-robot-silver hover:border-robot-blue"
+              )}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-8 grid gap-10">
+          {Object.entries(groupedItems).map(([category, items]) => (
+            <div key={category}>
+              <div className="mb-4 flex items-center justify-between gap-4">
+                <h2 className="font-display text-2xl font-bold text-white">{category}</h2>
+                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-bold text-robot-muted">{items.length} items</span>
               </div>
-
-              <label className="mt-4 block">
-                <span className="text-xs font-black uppercase tracking-[0.16em] text-robot-muted">Description</span>
-                <textarea value={item.description || ""} onChange={(event) => updateItem(index, "description", event.target.value)} rows="2" className="focus-ring mt-2 w-full rounded-2xl border border-white/10 bg-robot-night/70 px-4 py-3 text-white" />
-              </label>
-
-              <div className="mt-4 flex flex-wrap gap-3">
-                {["active", "featured", "popular", "signature"].map((key) => (
-                  <button
-                    key={key}
-                    type="button"
-                    onClick={() => toggleItem(index, key)}
-                    className={cn(
-                      "focus-ring rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.16em]",
-                      item[key] ? "border-robot-gold bg-robot-gold text-robot-night" : "border-white/10 bg-white/5 text-robot-muted"
-                    )}
-                  >
-                    {key}
-                  </button>
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {items.map((item) => (
+                  <article key={`${item.id}-${item.title}`} className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <h3 className="font-display text-xl font-bold text-white">{item.title}</h3>
+                        <p className="mt-2 text-sm font-bold text-robot-gold">{item.price}</p>
+                      </div>
+                      <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-bold text-robot-muted">{item.category}</span>
+                    </div>
+                    <p className="mt-4 min-h-12 text-sm leading-6 text-robot-muted">{item.description || "No description added in QR menu."}</p>
+                    <p className="mt-4 rounded-2xl border border-robot-blue/20 bg-robot-blue/10 px-4 py-3 text-xs font-bold text-robot-silver">{branchLabel(item)}</p>
+                  </article>
                 ))}
               </div>
-            </article>
+            </div>
           ))}
         </div>
       </motion.div>

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowLeft, Building2, ShieldCheck, UserRoundCog } from "lucide-react";
+import { ArrowLeft, Building2, LogOut, ShieldCheck, UserRoundCog } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { siteConfig } from "../config/site";
@@ -32,18 +32,32 @@ export default function AdminUsersPage() {
     { name: "Imaara Mall Hostess", email: "imaara@robotcafe.co.ke", role: "Hostess", access: "Imaara Mall reservations only" },
   ];
 
+  const logout = () => {
+    localStorage.removeItem("robotCafeAdminToken");
+    localStorage.removeItem("robotCafeStaffUser");
+    navigate("/my-account");
+  };
+
   return (
     <section className="px-5 py-10 sm:py-16">
       <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="mx-auto max-w-6xl">
-        <Link to="/admin" className="inline-flex items-center gap-2 text-sm font-bold text-robot-blue">
-          <ArrowLeft className="h-4 w-4" />
-          Back to admin
-        </Link>
-        <p className="mt-6 section-kicker">Access control</p>
-        <h1 className="mt-4 font-display text-4xl font-bold text-white md:text-6xl">Users & Branches</h1>
-        <p className="mt-4 max-w-3xl leading-8 text-robot-muted">
-          Staff accounts are locked to known emails and secure passwords. No public registration is available on Robot Cafe.
-        </p>
+        <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+          <div>
+            <Link to="/admin" className="inline-flex items-center gap-2 text-sm font-bold text-robot-blue">
+              <ArrowLeft className="h-4 w-4" />
+              Back to admin
+            </Link>
+            <p className="mt-6 section-kicker">Access control</p>
+            <h1 className="mt-4 font-display text-4xl font-bold text-white md:text-6xl">Users & Branches</h1>
+            <p className="mt-4 max-w-3xl leading-8 text-robot-muted">
+              Staff accounts are locked to known emails and secure passwords. No public registration is available on Robot Cafe.
+            </p>
+          </div>
+          <button onClick={logout} className="focus-ring inline-flex items-center justify-center gap-2 rounded-full border border-white/10 px-5 py-3 text-sm font-black text-white hover:border-robot-blue">
+            <LogOut className="h-4 w-4" />
+            Logout
+          </button>
+        </div>
 
         <div className="mt-10 grid gap-5">
           {staffAccounts.map((account) => (

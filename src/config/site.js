@@ -36,5 +36,6 @@ export const siteConfig = {
     { label: "Reviews", path: "/reviews" },
     { label: "About Us", path: "/about-us" },
     { label: "FAQ", path: "/faq" },
+    { label: "Contact Us", path: "/contact" },
   ],
 };

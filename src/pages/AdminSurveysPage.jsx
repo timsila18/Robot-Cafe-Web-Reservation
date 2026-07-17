@@ -42,6 +42,7 @@ export default function AdminSurveysPage() {
 
   const logout = () => {
     localStorage.removeItem("robotCafeAdminToken");
+    localStorage.removeItem("robotCafeStaffUser");
     navigate("/my-account");
   };
 
