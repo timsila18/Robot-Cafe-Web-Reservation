@@ -10,9 +10,9 @@ export default function MainNavbar({ theme, onToggleTheme }) {
 
   return (
     <header className="sticky top-0 z-40 bg-[#050505] shadow-2xl light:bg-white light:shadow-lg">
-      <nav className="mx-auto flex max-w-7xl items-stretch justify-between px-5 lg:px-6" aria-label="Main navigation">
+      <nav className="mx-auto flex max-w-7xl items-stretch justify-between px-4 sm:px-5 lg:px-6" aria-label="Main navigation">
         <NavLink to="/" className="flex min-w-0 items-center gap-3 py-4 lg:hidden">
-          <BrandLogo imageClassName="h-10 max-w-[180px] sm:h-12 sm:max-w-[230px]" />
+          <BrandLogo imageClassName="h-9 max-w-[138px] min-[380px]:max-w-[160px] sm:h-12 sm:max-w-[230px]" />
         </NavLink>
 
         <div className="hidden items-stretch lg:flex">
@@ -52,9 +52,18 @@ export default function MainNavbar({ theme, onToggleTheme }) {
           </NavLink>
         </div>
 
-        <div className="flex items-center gap-3 lg:hidden">
-          <ThemeToggle theme={theme} onToggle={onToggleTheme} />
-          <button className="focus-ring rounded-full p-3 text-white light:text-slate-950" onClick={() => setOpen((value) => !value)} aria-label="Toggle menu">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3 lg:hidden">
+          <NavLink
+            to="/reservations"
+            className="focus-ring inline-flex min-h-11 items-center justify-center rounded-full bg-robot-blue px-4 text-xs font-black uppercase tracking-[0.12em] text-white shadow-glow transition hover:bg-[#2d96ff] sm:px-5"
+          >
+            <span className="sm:hidden">Reserve</span>
+            <span className="hidden sm:inline">Make reservation</span>
+          </NavLink>
+          <div className="hidden sm:block">
+            <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+          </div>
+          <button className="focus-ring rounded-full p-2.5 text-white light:text-slate-950" onClick={() => setOpen((value) => !value)} aria-label="Toggle menu">
           {open ? <X /> : <Menu />}
           </button>
         </div>
@@ -74,6 +83,9 @@ export default function MainNavbar({ theme, onToggleTheme }) {
             <NavLink to="/my-account" onClick={() => setOpen(false)} className="rounded-xl px-4 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white/60 hover:bg-white/10 hover:text-white">
               Staff login
             </NavLink>
+            <div className="pt-2 sm:hidden">
+              <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+            </div>
           </div>
         </div>
       ) : null}
