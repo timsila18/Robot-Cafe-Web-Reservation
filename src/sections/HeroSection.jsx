@@ -5,7 +5,7 @@ import heroImage from "../assets/hero/robot-cafe-cinematic-hero.jpg";
 
 const trustItems = [
   { value: "7:30 AM - 10 PM", label: "Open daily" },
-  { value: "Lana Plaza", label: "Kileleshwa, Nairobi" },
+  { value: "Two branches", label: "Lana Plaza & Imaara Mall" },
   { value: "Future dining", label: "Robotic hospitality" },
 ];
 
