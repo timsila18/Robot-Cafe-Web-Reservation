@@ -20,14 +20,77 @@ function normalizeStatus(value) {
   return map[value] || "PENDING";
 }
 
+function statusLabel(value) {
+  const map = {
+    PENDING: "Pending host confirmation",
+    CONFIRMED: "Confirmed",
+    REJECTED: "Rejected",
+    CANCELLED: "Cancelled",
+    CANCELLATION_REQUESTED: "Cancellation requested",
+    MODIFICATION_REQUESTED: "Modification requested",
+  };
+
+  return map[value] || "Pending host confirmation";
+}
+
+function publicReservation(reservation) {
+  if (!reservation) return null;
+
+  return {
+    confirmationNumber: reservation.confirmationNumber,
+    status: statusLabel(reservation.status),
+    statusCode: reservation.status,
+    branchName: reservation.branch?.name,
+    branch: reservation.branch,
+    date: reservation.date,
+    selectedTime: reservation.selectedTime,
+    guests: reservation.guests,
+    preferences: reservation.preferences || [],
+    notes: reservation.notes || "",
+    reservationInbox: reservation.routingInbox,
+    customer: reservation.customer
+      ? {
+          firstName: reservation.customer.firstName,
+          lastName: reservation.customer.lastName,
+          email: reservation.customer.email,
+          phone: reservation.customer.phone,
+        }
+      : null,
+    createdAt: reservation.createdAt,
+    updatedAt: reservation.updatedAt,
+  };
+}
+
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    res.setHeader("Allow", "POST");
+  if (!["GET", "POST"].includes(req.method)) {
+    res.setHeader("Allow", "GET, POST");
     res.status(405).json({ error: "Method not allowed" });
     return;
   }
 
   try {
+    if (req.method === "GET") {
+      const confirmationNumber = String(req.query?.confirmationNumber || req.query?.confirmation || "").trim().toUpperCase();
+
+      if (!confirmationNumber) {
+        res.status(400).json({ error: "Confirmation number is required." });
+        return;
+      }
+
+      const reservation = await prisma.reservation.findUnique({
+        where: { confirmationNumber },
+        include: { branch: true, customer: true },
+      });
+
+      if (!reservation) {
+        res.status(404).json({ error: "Reservation not found. Please check the confirmation number." });
+        return;
+      }
+
+      res.status(200).json({ reservation: publicReservation(reservation) });
+      return;
+    }
+
     let payload;
     try {
       payload = typeof req.body === "string" ? JSON.parse(req.body) : req.body || {};
