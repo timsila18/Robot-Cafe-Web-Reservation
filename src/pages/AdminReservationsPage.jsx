@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowLeft, CalendarDays, CheckCircle2, Loader2, LogOut, MapPin, RefreshCw, XCircle } from "lucide-react";
+import { ArrowLeft, CalendarDays, CheckCircle2, Loader2, LogOut, MapPin, RefreshCw, Search, XCircle } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BrandLogo from "../components/BrandLogo";
@@ -43,6 +43,28 @@ function guestName(customer) {
   return [customer?.firstName, customer?.lastName].filter(Boolean).join(" ") || "Guest";
 }
 
+function searchableReservationText(reservation) {
+  return [
+    reservation.confirmationNumber,
+    reservation.status,
+    reservation.branch?.name,
+    reservation.branch?.shortName,
+    reservation.branchId,
+    guestName(reservation.customer),
+    reservation.customer?.firstName,
+    reservation.customer?.lastName,
+    reservation.customer?.email,
+    reservation.customer?.phone,
+    reservation.selectedTime,
+    reservation.guests,
+    reservation.notes,
+    ...(reservation.preferences || []),
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+}
+
 export default function AdminReservationsPage() {
   const navigate = useNavigate();
   const [staff, setStaff] = useState(() => readStaffUser());
@@ -50,6 +72,8 @@ export default function AdminReservationsPage() {
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
   const [updatingId, setUpdatingId] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const token = useMemo(() => localStorage.getItem("robotCafeAdminToken"), []);
 
@@ -99,6 +123,21 @@ export default function AdminReservationsPage() {
   };
 
   const visibleTitle = staff?.role === "hostess" ? `${staff.branchName} Reservations` : "All Branch Reservations";
+  const filteredReservations = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return reservations;
+    return reservations.filter((reservation) => searchableReservationText(reservation).includes(query));
+  }, [reservations, searchQuery]);
+
+  const submitSearch = (event) => {
+    event.preventDefault();
+    setSearchQuery(searchInput);
+  };
+
+  const clearSearch = () => {
+    setSearchInput("");
+    setSearchQuery("");
+  };
 
   return (
     <section className="px-5 py-10 sm:py-16">
@@ -129,6 +168,38 @@ export default function AdminReservationsPage() {
 
         {error ? <p className="mt-6 rounded-2xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-100">{error}</p> : null}
 
+        {status !== "loading" ? (
+          <form onSubmit={submitSearch} className="mt-8 rounded-[2rem] border border-white/10 bg-white/[0.04] p-4 shadow-premium sm:p-5">
+            <label htmlFor="reservationSearch" className="text-sm font-black uppercase tracking-[0.18em] text-robot-gold">
+              Search reservation
+            </label>
+            <div className="mt-3 grid gap-3 lg:grid-cols-[1fr_auto_auto]">
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-robot-muted" />
+                <input
+                  id="reservationSearch"
+                  value={searchInput}
+                  onChange={(event) => setSearchInput(event.target.value)}
+                  placeholder="Search by name, code, phone, email, status, branch, notes..."
+                  className="focus-ring min-h-14 w-full rounded-2xl border border-white/10 bg-robot-night/70 py-3 pl-12 pr-4 text-white placeholder:text-robot-muted"
+                />
+              </div>
+              <button type="submit" className="focus-ring inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-robot-blue px-5 text-sm font-black uppercase tracking-[0.14em] text-white shadow-glow hover:bg-[#2d96ff]">
+                <Search className="h-4 w-4" />
+                Search reservation
+              </button>
+              {searchQuery ? (
+                <button type="button" onClick={clearSearch} className="focus-ring inline-flex min-h-14 items-center justify-center rounded-2xl border border-white/10 px-5 text-sm font-black text-robot-silver hover:border-robot-blue">
+                  Clear
+                </button>
+              ) : null}
+            </div>
+            <p className="mt-3 text-sm text-robot-muted">
+              Showing {filteredReservations.length} of {reservations.length} reservations{searchQuery ? ` for "${searchQuery}"` : ""}.
+            </p>
+          </form>
+        ) : null}
+
         {status === "loading" ? (
           <div className="mt-10 flex flex-col gap-5 rounded-3xl border border-white/10 bg-white/[0.04] p-6 text-robot-muted sm:flex-row sm:items-center">
             <BrandLogo imageClassName="h-12 max-w-[230px]" />
@@ -147,8 +218,16 @@ export default function AdminReservationsPage() {
           </div>
         ) : null}
 
+        {status !== "loading" && reservations.length > 0 && filteredReservations.length === 0 ? (
+          <div className="mt-8 rounded-3xl border border-white/10 bg-white/[0.04] p-8 text-center">
+            <Search className="mx-auto h-10 w-10 text-robot-blue" />
+            <h2 className="mt-4 font-display text-2xl font-bold text-white">No matching reservations</h2>
+            <p className="mt-3 text-robot-muted">Try a guest name, phone number, email address, confirmation code, branch, or status.</p>
+          </div>
+        ) : null}
+
         <div className="mt-8 grid gap-5">
-          {reservations.map((reservation) => (
+          {filteredReservations.map((reservation) => (
             <article key={reservation.id} className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 shadow-premium">
               <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
                 <div>
