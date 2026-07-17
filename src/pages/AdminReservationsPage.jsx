@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, CalendarDays, CheckCircle2, Loader2, LogOut, MapPin, RefreshCw, XCircle } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import BrandLogo from "../components/BrandLogo";
 import { fetchAdminReservations, updateReservationStatus } from "../services/surveyService";
 import { cn } from "../utils/cn";
 
@@ -25,6 +26,17 @@ function readStaffUser() {
 function formatDate(value) {
   if (!value) return "Not set";
   return new Intl.DateTimeFormat("en-KE", { weekday: "short", day: "numeric", month: "short", year: "numeric" }).format(new Date(value));
+}
+
+function formatDateTime(value) {
+  if (!value) return "Not recorded";
+  return new Intl.DateTimeFormat("en-KE", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(value));
 }
 
 function guestName(customer) {
@@ -118,9 +130,12 @@ export default function AdminReservationsPage() {
         {error ? <p className="mt-6 rounded-2xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-100">{error}</p> : null}
 
         {status === "loading" ? (
-          <div className="mt-10 flex items-center gap-3 rounded-3xl border border-white/10 bg-white/[0.04] p-6 text-robot-muted">
-            <Loader2 className="h-5 w-5 animate-spin text-robot-blue" />
-            Loading reservations...
+          <div className="mt-10 flex flex-col gap-5 rounded-3xl border border-white/10 bg-white/[0.04] p-6 text-robot-muted sm:flex-row sm:items-center">
+            <BrandLogo imageClassName="h-12 max-w-[230px]" />
+            <span className="inline-flex items-center gap-3">
+              <Loader2 className="h-5 w-5 animate-spin text-robot-blue" />
+              Loading reservations...
+            </span>
           </div>
         ) : null}
 
@@ -155,10 +170,16 @@ export default function AdminReservationsPage() {
                     <p><strong className="text-white">Time:</strong> {reservation.selectedTime}</p>
                     <p><strong className="text-white">Guests:</strong> {reservation.guests}</p>
                     <p><strong className="text-white">Phone:</strong> {reservation.customer?.phone || "Not provided"}</p>
+                    <p><strong className="text-white">Received:</strong> {formatDateTime(reservation.createdAt)}</p>
                     <p className="sm:col-span-2"><strong className="text-white">Email:</strong> {reservation.customer?.email || "Not provided"}</p>
                     <p className="sm:col-span-2"><strong className="text-white">Preferences:</strong> {(reservation.preferences || []).join(", ") || "None"}</p>
                   </div>
-                  {reservation.notes ? <p className="mt-4 rounded-2xl border border-white/10 bg-robot-night/60 p-4 text-sm leading-6 text-robot-silver">{reservation.notes}</p> : null}
+                  {reservation.notes ? (
+                    <div className="mt-4 rounded-2xl border border-white/10 bg-robot-night/60 p-4 text-sm leading-6 text-robot-silver">
+                      <p className="font-black uppercase tracking-[0.16em] text-robot-gold">Customer details entered</p>
+                      <p className="mt-2">{reservation.notes}</p>
+                    </div>
+                  ) : null}
                 </div>
 
                 <div className="grid min-w-56 gap-2">

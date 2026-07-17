@@ -50,8 +50,18 @@ body::before {
 :root[data-theme="light"] body {
   background:
     radial-gradient(circle at top left, rgba(10, 132, 255, 0.12), transparent 30rem),
+    radial-gradient(circle at 88% 10%, rgba(212, 175, 55, 0.1), transparent 28rem),
     linear-gradient(180deg, #ffffff 0%, #f6f9fc 52%, #eef5fb 100%);
   color: #08111f;
+}
+
+.brand-logo img {
+  image-rendering: auto;
+  filter: drop-shadow(0 10px 26px rgba(10, 132, 255, 0.28)) drop-shadow(0 2px 8px rgba(0, 0, 0, 0.38));
+}
+
+:root[data-theme="light"] .brand-logo img {
+  filter: drop-shadow(0 8px 18px rgba(10, 41, 80, 0.18)) drop-shadow(0 1px 1px rgba(255, 255, 255, 0.86));
 }
 
 :root[data-theme="light"] .light\:bg-white {
@@ -133,6 +143,28 @@ body::before {
 
 :root[data-theme="light"] footer {
   background: #020914;
+}
+
+:root[data-theme="light"] .text-white {
+  color: #0f172a;
+}
+
+:root[data-theme="light"] header .text-white,
+:root[data-theme="light"] footer .text-white,
+:root[data-theme="light"] #home .text-white,
+:root[data-theme="light"] .bg-robot-blue.text-white,
+:root[data-theme="light"] .bg-emerald-500.text-white {
+  color: #ffffff;
+}
+
+:root[data-theme="light"] .text-robot-silver {
+  color: #1e293b;
+}
+
+:root[data-theme="light"] header .text-robot-silver,
+:root[data-theme="light"] footer .text-robot-silver,
+:root[data-theme="light"] #home .text-robot-silver {
+  color: #d9e2ec;
 }
 
 button,

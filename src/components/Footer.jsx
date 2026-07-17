@@ -8,7 +8,7 @@ export default function Footer() {
     <footer className="border-t border-white/10 bg-robot-night">
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 md:grid-cols-2 lg:grid-cols-[1.15fr_0.85fr_0.85fr_1fr_1.05fr] lg:px-6">
         <div>
-          <BrandLogo imageClassName="h-12" />
+          <BrandLogo imageClassName="h-14 max-w-[260px]" />
           <p className="mt-4 max-w-md leading-8 text-white">
             <strong>Robot Cafe</strong> - Where cutting-edge technology meets warm hospitality across Lana Plaza and Imaara Mall.
           </p>

@@ -11,8 +11,8 @@ export default function MainNavbar({ theme, onToggleTheme }) {
   return (
     <header className="sticky top-0 z-40 bg-[#050505] shadow-2xl light:bg-white light:shadow-lg">
       <nav className="mx-auto flex max-w-7xl items-stretch justify-between px-5 lg:px-6" aria-label="Main navigation">
-        <NavLink to="/" className="flex items-center gap-3 py-4 lg:hidden">
-          <BrandLogo imageClassName="h-9 sm:h-10" />
+        <NavLink to="/" className="flex min-w-0 items-center gap-3 py-4 lg:hidden">
+          <BrandLogo imageClassName="h-10 max-w-[180px] sm:h-12 sm:max-w-[230px]" />
         </NavLink>
 
         <div className="hidden items-stretch lg:flex">
@@ -61,7 +61,7 @@ export default function MainNavbar({ theme, onToggleTheme }) {
       </nav>
 
       {open ? (
-        <div className="border-t border-white/10 bg-[#0b0b0b] px-5 py-4 lg:hidden">
+        <div className="border-t border-white/10 bg-[#0b0b0b] px-5 py-4 light:bg-white lg:hidden">
           <div className="grid gap-2">
             {siteConfig.navItems.map((item) => (
               <NavLink key={item.path} to={item.path} onClick={() => setOpen(false)} className="rounded-xl px-4 py-3 text-sm font-semibold text-white hover:bg-robot-blue">

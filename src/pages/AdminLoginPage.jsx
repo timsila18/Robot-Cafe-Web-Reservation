@@ -3,6 +3,7 @@ import { LockKeyhole, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { adminLogin } from "../services/surveyService";
+import BrandLogo from "../components/BrandLogo";
 
 export default function AdminLoginPage() {
   const navigate = useNavigate();
@@ -35,7 +36,8 @@ export default function AdminLoginPage() {
         animate={{ opacity: 1, y: 0 }}
         className="glass-panel mx-auto max-w-xl rounded-[2rem] p-6 md:p-10"
       >
-        <div className="grid h-14 w-14 place-items-center rounded-full bg-robot-blue text-white shadow-glow">
+        <BrandLogo className="justify-start" imageClassName="h-16 max-w-[320px]" />
+        <div className="mt-8 grid h-14 w-14 place-items-center rounded-full bg-robot-blue text-white shadow-glow">
           <ShieldCheck className="h-7 w-7" />
         </div>
         <p className="mt-6 section-kicker">Staff access</p>

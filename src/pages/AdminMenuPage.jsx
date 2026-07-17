@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, BookOpenText, ExternalLink, LogOut, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import LoadingBrand from "../components/LoadingBrand";
 import { cn } from "../utils/cn";
 
 function tokenOrRedirect(navigate) {
@@ -75,7 +76,7 @@ export default function AdminMenuPage() {
   }, [visibleItems]);
 
   if (status === "loading") {
-    return <section className="px-5 py-24 text-center text-robot-muted">Loading live QR menu...</section>;
+    return <LoadingBrand label="Loading live QR menu..." />;
   }
 
   return (

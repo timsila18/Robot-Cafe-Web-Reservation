@@ -17,7 +17,7 @@ export default function HeaderTopBar({ theme, onToggleTheme }) {
     <div className="hidden border-b border-white/10 bg-[#020914] text-white lg:block light:border-slate-200 light:bg-white light:text-robot-night">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-8 px-6 py-7">
         <a href="/" className="shrink-0" aria-label="Robot Cafe home">
-          <BrandLogo plain imageClassName="h-14" />
+          <BrandLogo imageClassName="h-16 max-w-[260px]" />
         </a>
         <div className="grid flex-1 grid-cols-4 gap-6">
           {items.map(({ icon: Icon, label, text }) => (

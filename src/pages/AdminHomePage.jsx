@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { BarChart3, BookOpenText, CalendarCheck2, LogOut, ShieldCheck, UsersRound } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import BrandLogo from "../components/BrandLogo";
 
 const adminCards = [
   {
@@ -65,7 +66,8 @@ export default function AdminHomePage() {
       <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="mx-auto max-w-6xl">
         <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="section-kicker">Robot Cafe staff</p>
+            <BrandLogo imageClassName="h-16 max-w-[320px]" />
+            <p className="mt-6 section-kicker">Robot Cafe staff</p>
             <h1 className="mt-4 font-display text-4xl font-bold text-white md:text-6xl">{staff?.role === "hostess" ? `${staff.branchName} Hostess Desk` : "Admin Control Room"}</h1>
             <p className="mt-4 max-w-2xl leading-8 text-robot-muted">
               {staff?.role === "hostess"

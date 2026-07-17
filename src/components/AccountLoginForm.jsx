@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { adminLogin } from "../services/surveyService";
+import BrandLogo from "./BrandLogo";
 
 export default function AccountLoginForm() {
   const navigate = useNavigate();
@@ -36,7 +37,8 @@ export default function AccountLoginForm() {
         animate={{ opacity: 1, y: 0 }}
         className="glass-panel rounded-3xl p-7 md:p-10"
       >
-        <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-robot-blue text-white shadow-glow">
+        <BrandLogo className="mx-auto justify-center" imageClassName="h-16 max-w-[300px]" />
+        <div className="mx-auto mt-8 grid h-16 w-16 place-items-center rounded-full bg-robot-blue text-white shadow-glow">
           <ShieldCheck className="h-8 w-8" />
         </div>
         <p className="mt-6 text-center section-kicker">Staff only</p>

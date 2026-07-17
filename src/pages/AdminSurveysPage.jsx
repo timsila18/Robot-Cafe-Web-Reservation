@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { AlertTriangle, ArrowLeft, BarChart3, LogOut, Star, TrendingUp, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import LoadingBrand from "../components/LoadingBrand";
 import { fetchSurveyDashboard } from "../services/surveyService";
 import { cn } from "../utils/cn";
 
@@ -14,6 +15,20 @@ function MetricCard({ icon: Icon, label, value, helper }) {
       {helper ? <p className="mt-2 text-sm text-robot-muted">{helper}</p> : null}
     </div>
   );
+}
+
+const responseTagFields = [
+  "priceTags",
+  "waiterServiceTags",
+  "robotExperienceTags",
+  "ambienceTags",
+  "foodFlavorTags",
+  "foodValueTags",
+  "foodPortionTags",
+];
+
+function responseSignals(response) {
+  return responseTagFields.flatMap((field) => response[field] || []).slice(0, 8);
 }
 
 export default function AdminSurveysPage() {
@@ -47,7 +62,7 @@ export default function AdminSurveysPage() {
   };
 
   if (status === "loading") {
-    return <section className="px-5 py-24 text-center text-robot-muted">Loading Robot Cafe survey insights...</section>;
+    return <LoadingBrand label="Loading Robot Cafe survey insights..." />;
   }
 
   if (status === "error") {
@@ -160,13 +175,29 @@ export default function AdminSurveysPage() {
           </div>
           <div className="grid divide-y divide-white/10">
             {responses.slice(0, 12).map((response) => (
-              <div key={response.id} className="grid gap-3 p-5 md:grid-cols-[1.2fr_0.7fr_1.2fr] md:items-center">
+              <div key={response.id} className="grid gap-4 p-5 md:grid-cols-[1.1fr_0.55fr_1.35fr] md:items-start">
                 <div>
                   <p className="font-bold text-white">{response.branch?.name}</p>
                   <p className="mt-1 text-sm text-robot-muted">{new Date(response.createdAt).toLocaleString()}</p>
+                  <p className="mt-2 text-xs font-bold uppercase tracking-[0.16em] text-robot-gold">
+                    {response.tableCode ? `Table ${response.tableCode}` : "No table code"} | {response.source || "qr"}
+                  </p>
                 </div>
                 <p className="font-display text-3xl font-bold text-robot-gold">{response.overallRating}/5</p>
-                <p className="text-sm leading-6 text-robot-muted">{response.comment || "No written comment."}</p>
+                <div>
+                  <p className="text-sm leading-6 text-robot-muted">{response.comment || "No written comment."}</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {responseSignals(response).length ? (
+                      responseSignals(response).map((tag, index) => (
+                        <span key={`${tag}-${index}`} className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-bold text-robot-silver">
+                          {tag}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-xs text-robot-muted">No quick tags selected.</span>
+                    )}
+                  </div>
+                </div>
               </div>
             ))}
           </div>
