@@ -2,7 +2,7 @@ export const siteConfig = {
   name: "Robot Cafe",
   phone: "0769 30 30 30",
   phoneIntl: "+254 769 303030",
-  email: "reservation@robotcafe.co.ke",
+  email: "info@robotcafe.co.ke",
   address: "Lana Plaza, Oloitoktok Rd, Nairobi",
   openingHours: "Mon - Sun, 7:30 AM - 10 PM",
   whatsappUrl: "https://wa.me/254769303030",
