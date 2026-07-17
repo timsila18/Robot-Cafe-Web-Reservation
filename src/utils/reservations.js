@@ -44,7 +44,7 @@ export function createReservationFallback() {
     },
     branchName: "Robot Cafe - Lana Plaza",
     branchAddress: "Lana Plaza, Oloitoktok Rd, Nairobi",
-    reservationInbox: "reservations@robotcafe.co.ke",
+    reservationInbox: "reservation@robotcafe.co.ke",
     reservationRoutingLabel: "Lana Plaza reservation desk",
     date: "Pending selection",
     selectedTime: "Pending selection",

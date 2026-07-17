@@ -43,7 +43,7 @@ export default function ReservationConfirmationPage() {
               <p><strong className="text-white">Email:</strong> {reservation.email || "Not provided"}</p>
               <p><strong className="text-white">Status:</strong> {reservation.status}</p>
               <p><strong className="text-white">Branch Address:</strong> {reservation.branchAddress || reservation.branch?.address || "Robot Cafe"}</p>
-              <p><strong className="text-white">Reservation Desk:</strong> {reservation.reservationInbox || "reservations@robotcafe.co.ke"}</p>
+              <p><strong className="text-white">Reservation Desk:</strong> {reservation.reservationInbox || "reservation@robotcafe.co.ke"}</p>
             </div>
             {reservation.preferences?.length ? (
               <p className="mt-4 text-robot-silver"><strong className="text-white">Preferences:</strong> {reservation.preferences.join(", ")}</p>
