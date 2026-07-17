@@ -24,6 +24,17 @@ export default function ReservationConfirmationPage() {
           <p className="mt-5 max-w-3xl leading-8 text-robot-muted">
             Thank you{reservation.firstName ? `, ${reservation.firstName}` : ""}. Your request has been routed to the {reservation.reservationRoutingLabel || "Robot Cafe reservation desk"} for confirmation.
           </p>
+          {reservation.syncStatus === "local-fallback" ? (
+            <div className="mt-6 rounded-3xl border border-robot-gold/30 bg-robot-gold/10 p-5 text-robot-silver">
+              <p className="font-display text-xl font-bold text-white">Reservation desk follow-up needed</p>
+              <p className="mt-2 leading-7">
+                {reservation.syncMessage || "Please contact the reservation desk with your confirmation number so the host team can process this request."}
+              </p>
+              <p className="mt-3 text-sm font-bold text-robot-gold">
+                Desk: {reservation.reservationInbox || "reservation@robotcafe.co.ke"} | {reservation.branch?.phone || "0769 30 30 30"}
+              </p>
+            </div>
+          ) : null}
 
           <div className="mt-10 grid gap-4 md:grid-cols-2">
             {summary.map(({ icon: Icon, label, value }) => (

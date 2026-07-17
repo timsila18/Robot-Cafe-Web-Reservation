@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import PremiumButton from "./PremiumButton";
 import { siteConfig } from "../config/site";
 import { saveReservationRequest } from "../utils/reservations";
 import { persistReservationRequest } from "../services/reservationService";
@@ -11,22 +10,47 @@ export default function ReservationForm({ compact = false }) {
   const [step, setStep] = useState(1);
   const [selectedTime, setSelectedTime] = useState("12:30 pm - 1:00 pm");
   const [selectedPreferences, setSelectedPreferences] = useState([]);
+  const [stepError, setStepError] = useState("");
+  const [submitError, setSubmitError] = useState("");
+  const [reservationDetails, setReservationDetails] = useState({
+    branchId: siteConfig.branches[0].id,
+    guests: "2",
+    date: "",
+  });
   const {
     register,
-    handleSubmit,
     formState: { errors },
     trigger,
     getValues,
+    setValue,
     watch,
   } = useForm({
     defaultValues: { guests: "2", branchId: siteConfig.branches[0].id },
   });
-  const selectedBranchId = watch("branchId");
+  const selectedBranchId = watch("branchId") || reservationDetails.branchId;
   const selectedBranch = siteConfig.branches.find((branch) => branch.id === selectedBranchId) || siteConfig.branches[0];
 
   async function continueToGuestInfo() {
+    setStepError("");
+    const form = document.querySelector("[data-reservation-form]");
+    const dateValue = getValues("date") || form?.querySelector("input[name='date']")?.value;
+    const branchValue = getValues("branchId") || form?.querySelector("select[name='branchId']")?.value;
+    const guestsValue = getValues("guests") || form?.querySelector("select[name='guests']")?.value;
+
+    if (dateValue) setValue("date", dateValue, { shouldValidate: true });
+    if (branchValue) setValue("branchId", branchValue, { shouldValidate: true });
+    if (guestsValue) setValue("guests", guestsValue, { shouldValidate: true });
+
     const valid = await trigger(["branchId", "guests", "date"]);
-    if (!valid) return;
+    if (!valid || !dateValue) {
+      setStepError("Please select a branch, guest count, and reservation date before continuing.");
+      return;
+    }
+    setReservationDetails({
+      branchId: branchValue || siteConfig.branches[0].id,
+      guests: guestsValue || "2",
+      date: dateValue,
+    });
     setStep(2);
   }
 
@@ -51,10 +75,38 @@ export default function ReservationForm({ compact = false }) {
     saveReservationRequest(reservation);
     try {
       await persistReservationRequest(reservation);
+      reservation.syncStatus = "saved";
     } catch (error) {
       console.warn(error);
+      reservation.syncStatus = "local-fallback";
+      reservation.syncMessage =
+        "We saved this confirmation on your device, but the live reservation desk sync needs staff follow-up. Please call or email the reservation desk with your confirmation number.";
     }
+    saveReservationRequest(reservation);
     navigate("/reservations/confirmation", { state: { reservation } });
+  }
+
+  async function submitReservationFromForm() {
+    setSubmitError("");
+    const form = document.querySelector("[data-reservation-form]");
+    const field = (name) => form?.querySelector(`[name='${name}']`)?.value?.trim() || getValues(name) || "";
+    const data = {
+      branchId: reservationDetails.branchId || field("branchId") || siteConfig.branches[0].id,
+      guests: reservationDetails.guests || field("guests") || "2",
+      date: reservationDetails.date || field("date"),
+      firstName: field("firstName"),
+      lastName: field("lastName"),
+      phone: field("phone"),
+      email: field("email"),
+      notes: field("notes"),
+    };
+
+    if (!data.date || !data.firstName || !data.lastName || !data.phone || !data.email) {
+      setSubmitError("Please fill in date, name, phone, and email before submitting your reservation request.");
+      return;
+    }
+
+    await onSubmit(data);
   }
 
   function togglePreference(preference) {
@@ -94,7 +146,7 @@ export default function ReservationForm({ compact = false }) {
   const availableSlots = timeSlots.filter((_, index) => index !== blockedSlotIndex).length;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="glass-panel rounded-3xl p-5 sm:p-8">
+    <form data-reservation-form onSubmit={(event) => event.preventDefault()} className="glass-panel rounded-3xl p-5 sm:p-8">
       {step === 1 ? (
         <div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -176,17 +228,25 @@ export default function ReservationForm({ compact = false }) {
               </div>
             </div>
           </div>
-          <PremiumButton type="button" onClick={continueToGuestInfo} className="mt-8">
+          <button
+            type="button"
+            onClick={continueToGuestInfo}
+            className="focus-ring mt-8 inline-flex items-center justify-center rounded-full bg-robot-blue px-6 py-3 text-sm font-black uppercase tracking-[0.14em] text-white shadow-glow transition hover:-translate-y-0.5 hover:bg-[#2d96ff]"
+          >
             Continue
-          </PremiumButton>
+          </button>
+          {stepError ? <p className="mt-4 rounded-2xl border border-robot-gold/30 bg-robot-gold/10 px-4 py-3 text-sm font-bold text-robot-silver">{stepError}</p> : null}
         </div>
       ) : (
         <div>
           <h3 className="font-display text-3xl font-extrabold text-white sm:text-4xl">Step 2: Guest Information</h3>
+          <input type="hidden" name="branchId" value={reservationDetails.branchId} readOnly />
+          <input type="hidden" name="guests" value={reservationDetails.guests} readOnly />
+          <input type="hidden" name="date" value={reservationDetails.date} readOnly />
           <div className="mt-4 grid gap-3 rounded-3xl border border-white/10 bg-white/5 p-5 text-sm text-robot-silver sm:grid-cols-3">
             <p><span className="font-extrabold text-white">Branch:</span> {selectedBranch.shortName}</p>
-            <p><span className="font-extrabold text-white">Guests:</span> {getValues("guests")}</p>
-            <p><span className="font-extrabold text-white">Date:</span> {getValues("date") || "Not selected"}</p>
+            <p><span className="font-extrabold text-white">Guests:</span> {reservationDetails.guests}</p>
+            <p><span className="font-extrabold text-white">Date:</span> {reservationDetails.date || "Not selected"}</p>
             <p><span className="font-extrabold text-white">Time:</span> {selectedTime}</p>
           </div>
           <div className="mt-8 grid min-w-0 gap-4 sm:grid-cols-2">
@@ -241,13 +301,18 @@ export default function ReservationForm({ compact = false }) {
             </label>
           ) : null}
           <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center">
-            <PremiumButton type="submit">
+            <button
+              type="button"
+              onClick={submitReservationFromForm}
+              className="focus-ring inline-flex items-center justify-center rounded-full bg-robot-blue px-6 py-3 text-sm font-black uppercase tracking-[0.14em] text-white shadow-glow transition hover:-translate-y-0.5 hover:bg-[#2d96ff]"
+            >
               Make a reservation request
-            </PremiumButton>
+            </button>
             <button type="button" onClick={() => setStep(1)} className="focus-ring rounded-full px-5 py-3 text-sm font-bold text-robot-silver hover:bg-white/10">
               Back
             </button>
           </div>
+          {submitError ? <p className="mt-4 rounded-2xl border border-robot-gold/30 bg-robot-gold/10 px-4 py-3 text-sm font-bold text-robot-silver">{submitError}</p> : null}
         </div>
       )}
     </form>
