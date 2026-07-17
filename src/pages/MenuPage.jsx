@@ -62,7 +62,7 @@ export default function MenuPage() {
             <SectionHeading
               align="left"
               title="Our Menu"
-              subtitle={status === "loaded" ? "Live Robot Cafe menu content, upgraded with search, categories, signature picks, and premium dish imagery." : "The familiar Robot Cafe menu journey, now upgraded with search, categories, signature picks, and premium dish imagery."}
+              subtitle={status === "loaded" ? "Live Robot Cafe menu content drawn from the QR platform, including cPanel-hosted dish photography when available." : "The familiar Robot Cafe menu journey, now upgraded with search, categories, signature picks, and premium dish imagery."}
             />
             <div className="glass-panel rounded-3xl p-5">
               <label className="text-sm font-bold uppercase tracking-[0.18em] text-robot-muted" htmlFor="menu-search">
