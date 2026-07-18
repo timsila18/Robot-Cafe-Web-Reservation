@@ -1,8 +1,12 @@
 import GalleryLightbox from "../components/GalleryLightbox";
 import SectionHeading from "../components/SectionHeading";
-import { galleryImages } from "../data/gallery";
+import { useMenuContent } from "../hooks/useMenuContent";
+import { getGalleryItemsWithMenuFallback } from "../services/contentService";
 
 export default function GallerySection() {
+  const { items } = useMenuContent();
+  const galleryImages = getGalleryItemsWithMenuFallback(items);
+
   return (
     <section id="gallery" className="luxury-surface border-y border-white/10 bg-robot-navy/72 px-5 py-24 lg:px-6 light:border-slate-200 light:bg-slate-50">
       <div className="mx-auto max-w-7xl">

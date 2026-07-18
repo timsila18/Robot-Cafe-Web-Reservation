@@ -1,13 +1,19 @@
 import { Camera, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import SectionHeading from "../components/SectionHeading";
-import { getGalleryCategories, getGalleryItems } from "../services/contentService";
+import { useMenuContent } from "../hooks/useMenuContent";
+import { getGalleryCategories, getGalleryItemsWithMenuFallback } from "../services/contentService";
 
 export default function GalleryPage() {
   const [category, setCategory] = useState("All");
   const [activeImage, setActiveImage] = useState(null);
-  const categories = getGalleryCategories();
-  const images = getGalleryItems();
+  const { items } = useMenuContent();
+  const images = getGalleryItemsWithMenuFallback(items, 24);
+  const categories = useMemo(() => {
+    const galleryCategories = getGalleryCategories();
+    const imageCategories = images.map((image) => image.category).filter(Boolean);
+    return ["All", ...Array.from(new Set([...galleryCategories.filter((item) => item !== "All"), ...imageCategories]))];
+  }, [images]);
   const filteredImages = useMemo(
     () => images.filter((image) => category === "All" || image.category === category),
     [category, images]

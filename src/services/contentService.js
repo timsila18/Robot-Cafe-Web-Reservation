@@ -3,6 +3,7 @@ import menuContent from "../data/cms/menu.json";
 import mediaCategoriesContent from "../data/cms/media-categories.json";
 import promotionsContent from "../data/cms/promotions.json";
 import eventsContent from "../data/cms/events.json";
+import { mediaConfig } from "../config/media";
 import { mediaFromRecord } from "./mediaService";
 
 const today = new Date();
@@ -39,6 +40,29 @@ function withImage(record, mediaKey = "media", transform = "card") {
 
 function byTitle(a, b) {
   return a.title.localeCompare(b.title);
+}
+
+function hasUploadedMedia(record, mediaKey = "media") {
+  const media = record[mediaKey] || record.media || record.banner;
+  return Boolean(record.imageUrl || (mediaConfig.cloudinaryBase && media?.publicId));
+}
+
+function menuItemAsGalleryImage(item) {
+  return {
+    id: `menu-gallery-${item.id}`,
+    title: item.title,
+    category: item.category || "Food",
+    featured: Boolean(item.featured || item.signature || item.popular),
+    src: item.imageUrl || item.image || item.src,
+    image: item.imageUrl || item.image || item.src,
+    source: "menu",
+  };
+}
+
+function featuredFirst(items, limit) {
+  const featured = items.filter((item) => item.featured);
+  const regular = items.filter((item) => !item.featured);
+  return [...featured, ...regular].slice(0, limit);
 }
 
 export function getMediaCategories() {
@@ -110,9 +134,25 @@ export function getGalleryItems() {
   return galleryContent.images.map((image) => withImage(image, "media"));
 }
 
+export function getUploadedGalleryItems() {
+  return galleryContent.images.filter((image) => hasUploadedMedia(image, "media")).map((image) => withImage(image, "media"));
+}
+
 export function getFeaturedGalleryItems() {
   const featured = getGalleryItems().filter((image) => image.featured);
   return featured.length ? featured : getGalleryItems().slice(0, 6);
+}
+
+export function getGalleryItemsWithMenuFallback(menuItems = [], limit = 6) {
+  const uploadedGallery = getUploadedGalleryItems();
+  if (uploadedGallery.length) {
+    return featuredFirst(uploadedGallery, limit);
+  }
+
+  const menuPhotos = menuItems
+    .filter((item) => item.imageUrl || item.image || item.src)
+    .map(menuItemAsGalleryImage);
+  return featuredFirst(menuPhotos, limit);
 }
 
 export function getEvents() {
