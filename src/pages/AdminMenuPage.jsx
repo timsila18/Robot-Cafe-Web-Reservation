@@ -7,14 +7,14 @@ import { cn } from "../utils/cn";
 
 function tokenOrRedirect(navigate) {
   const token = localStorage.getItem("robotCafeAdminToken");
-  if (!token) navigate("/my-account");
+  if (!token) navigate("/staff-login");
   return token;
 }
 
 function logout(navigate) {
   localStorage.removeItem("robotCafeAdminToken");
   localStorage.removeItem("robotCafeStaffUser");
-  navigate("/my-account");
+  navigate("/staff-login");
 }
 
 async function fetchLiveMenu() {

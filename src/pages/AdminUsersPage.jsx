@@ -18,7 +18,7 @@ export default function AdminUsersPage() {
 
   useEffect(() => {
     if (!localStorage.getItem("robotCafeAdminToken")) {
-      navigate("/my-account");
+      navigate("/staff-login");
       return;
     }
     if (staff?.role !== "admin") {
@@ -35,7 +35,7 @@ export default function AdminUsersPage() {
   const logout = () => {
     localStorage.removeItem("robotCafeAdminToken");
     localStorage.removeItem("robotCafeStaffUser");
-    navigate("/my-account");
+    navigate("/staff-login");
   };
 
   return (

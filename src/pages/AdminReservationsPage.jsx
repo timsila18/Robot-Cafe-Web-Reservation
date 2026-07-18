@@ -79,7 +79,7 @@ export default function AdminReservationsPage() {
 
   const loadReservations = async () => {
     if (!token) {
-      navigate("/my-account");
+      navigate("/staff-login");
       return;
     }
 
@@ -119,7 +119,7 @@ export default function AdminReservationsPage() {
   const logout = () => {
     localStorage.removeItem("robotCafeAdminToken");
     localStorage.removeItem("robotCafeStaffUser");
-    navigate("/my-account");
+    navigate("/staff-login");
   };
 
   const visibleTitle = staff?.role === "hostess" ? `${staff.branchName} Reservations` : "All Branch Reservations";

@@ -49,14 +49,14 @@ export default function AdminHomePage() {
 
   useEffect(() => {
     if (!localStorage.getItem("robotCafeAdminToken")) {
-      navigate("/my-account");
+      navigate("/staff-login");
     }
   }, [navigate]);
 
   const logout = () => {
     localStorage.removeItem("robotCafeAdminToken");
     localStorage.removeItem("robotCafeStaffUser");
-    navigate("/my-account");
+    navigate("/staff-login");
   };
 
   const cards = adminCards.filter((card) => card.roles.includes(staff?.role || "admin"));

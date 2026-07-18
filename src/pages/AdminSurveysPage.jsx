@@ -40,7 +40,7 @@ export default function AdminSurveysPage() {
   useEffect(() => {
     const token = localStorage.getItem("robotCafeAdminToken");
     if (!token) {
-      navigate("/my-account");
+      navigate("/staff-login");
       return;
     }
 
@@ -58,7 +58,7 @@ export default function AdminSurveysPage() {
   const logout = () => {
     localStorage.removeItem("robotCafeAdminToken");
     localStorage.removeItem("robotCafeStaffUser");
-    navigate("/my-account");
+    navigate("/staff-login");
   };
 
   if (status === "loading") {
@@ -72,7 +72,7 @@ export default function AdminSurveysPage() {
           <AlertTriangle className="h-8 w-8" />
           <h1 className="mt-4 font-display text-3xl font-bold">Dashboard unavailable</h1>
           <p className="mt-3">{error}</p>
-          <Link to="/my-account" className="mt-5 inline-flex rounded-full bg-white px-5 py-3 text-sm font-black text-robot-night">
+          <Link to="/staff-login" className="mt-5 inline-flex rounded-full bg-white px-5 py-3 text-sm font-black text-robot-night">
             Return to login
           </Link>
         </div>

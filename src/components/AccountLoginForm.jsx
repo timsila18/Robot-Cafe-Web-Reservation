@@ -43,7 +43,7 @@ export default function AccountLoginForm() {
           <ShieldCheck className="h-8 w-8" />
         </div>
         <p className="mt-6 text-center section-kicker">Staff only</p>
-        <h1 className="mt-4 text-center font-display text-4xl font-bold text-white">My Account</h1>
+        <h1 className="mt-4 text-center font-display text-4xl font-bold text-white">Staff Login</h1>
         <p className="mt-4 text-center leading-7 text-robot-muted">
           Secure access for Robot Cafe admins and hostesses. Guests do not need an account to view the website, explore menus, or make reservations.
         </p>
