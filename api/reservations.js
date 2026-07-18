@@ -15,6 +15,7 @@ function normalizeStatus(value) {
     Confirmed: "CONFIRMED",
     Rejected: "REJECTED",
     Cancelled: "CANCELLED",
+    Completed: "COMPLETED",
   };
 
   return map[value] || "PENDING";
@@ -26,6 +27,7 @@ function statusLabel(value) {
     CONFIRMED: "Confirmed",
     REJECTED: "Rejected",
     CANCELLED: "Cancelled",
+    COMPLETED: "Completed",
     CANCELLATION_REQUESTED: "Cancellation requested",
     MODIFICATION_REQUESTED: "Modification requested",
   };

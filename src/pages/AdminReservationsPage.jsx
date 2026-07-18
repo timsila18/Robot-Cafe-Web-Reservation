@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowLeft, CalendarDays, CheckCircle2, Loader2, LogOut, MapPin, RefreshCw, Search, XCircle } from "lucide-react";
+import { ArrowLeft, CalendarDays, CheckCircle2, History, Loader2, LogOut, MapPin, RefreshCw, Search, XCircle } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BrandLogo from "../components/BrandLogo";
@@ -11,6 +11,7 @@ const statusStyles = {
   CONFIRMED: "border-emerald-300/30 bg-emerald-400/10 text-emerald-100",
   REJECTED: "border-red-300/30 bg-red-400/10 text-red-100",
   CANCELLED: "border-slate-300/20 bg-slate-400/10 text-slate-100",
+  COMPLETED: "border-robot-gold/40 bg-robot-gold/10 text-robot-gold",
   CANCELLATION_REQUESTED: "border-orange-300/30 bg-orange-400/10 text-orange-100",
   MODIFICATION_REQUESTED: "border-blue-300/30 bg-blue-400/10 text-blue-100",
 };
@@ -74,6 +75,7 @@ export default function AdminReservationsPage() {
   const [updatingId, setUpdatingId] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [basket, setBasket] = useState("ongoing");
 
   const token = useMemo(() => localStorage.getItem("robotCafeAdminToken"), []);
 
@@ -123,11 +125,14 @@ export default function AdminReservationsPage() {
   };
 
   const visibleTitle = staff?.role === "hostess" ? `${staff.branchName} Reservations` : "All Branch Reservations";
+  const ongoingReservations = useMemo(() => reservations.filter((reservation) => reservation.status !== "COMPLETED"), [reservations]);
+  const historyReservations = useMemo(() => reservations.filter((reservation) => reservation.status === "COMPLETED"), [reservations]);
+  const basketReservations = basket === "history" ? historyReservations : ongoingReservations;
   const filteredReservations = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
-    if (!query) return reservations;
-    return reservations.filter((reservation) => searchableReservationText(reservation).includes(query));
-  }, [reservations, searchQuery]);
+    if (!query) return basketReservations;
+    return basketReservations.filter((reservation) => searchableReservationText(reservation).includes(query));
+  }, [basketReservations, searchQuery]);
 
   const submitSearch = (event) => {
     event.preventDefault();
@@ -151,7 +156,7 @@ export default function AdminReservationsPage() {
             <p className="mt-6 section-kicker">Reservation desk</p>
             <h1 className="mt-4 font-display text-4xl font-bold text-white md:text-6xl">{visibleTitle}</h1>
             <p className="mt-4 max-w-3xl leading-8 text-robot-muted">
-              Confirm, reject, cancel, and monitor Robot Cafe booking requests from one secure staff view.
+              Confirm, reject, cancel, complete, and monitor Robot Cafe booking requests from one secure staff view.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -169,35 +174,68 @@ export default function AdminReservationsPage() {
         {error ? <p className="mt-6 rounded-2xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-100">{error}</p> : null}
 
         {status !== "loading" ? (
-          <form onSubmit={submitSearch} className="mt-8 rounded-[2rem] border border-white/10 bg-white/[0.04] p-4 shadow-premium sm:p-5">
-            <label htmlFor="reservationSearch" className="text-sm font-black uppercase tracking-[0.18em] text-robot-gold">
-              Search reservation
-            </label>
-            <div className="mt-3 grid gap-3 lg:grid-cols-[1fr_auto_auto]">
-              <div className="relative">
-                <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-robot-muted" />
-                <input
-                  id="reservationSearch"
-                  value={searchInput}
-                  onChange={(event) => setSearchInput(event.target.value)}
-                  placeholder="Search by name, code, phone, email, status, branch, notes..."
-                  className="focus-ring min-h-14 w-full rounded-2xl border border-white/10 bg-robot-night/70 py-3 pl-12 pr-4 text-white placeholder:text-robot-muted"
-                />
-              </div>
-              <button type="submit" className="focus-ring inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-robot-blue px-5 text-sm font-black uppercase tracking-[0.14em] text-white shadow-glow hover:bg-[#2d96ff]">
-                <Search className="h-4 w-4" />
-                Search reservation
-              </button>
-              {searchQuery ? (
-                <button type="button" onClick={clearSearch} className="focus-ring inline-flex min-h-14 items-center justify-center rounded-2xl border border-white/10 px-5 text-sm font-black text-robot-silver hover:border-robot-blue">
-                  Clear
-                </button>
-              ) : null}
+          <div className="mt-8 rounded-[2rem] border border-white/10 bg-white/[0.04] p-4 shadow-premium sm:p-5">
+            <div className="grid gap-3 sm:grid-cols-2">
+              {[
+                { id: "ongoing", label: "Ongoing", count: ongoingReservations.length, icon: CalendarDays },
+                { id: "history", label: "History", count: historyReservations.length, icon: History },
+              ].map((item) => {
+                const Icon = item.icon;
+                const active = basket === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => {
+                      setBasket(item.id);
+                      setSearchInput("");
+                      setSearchQuery("");
+                    }}
+                    className={cn(
+                      "focus-ring flex min-h-14 items-center justify-between rounded-2xl border px-5 py-3 text-left transition",
+                      active ? "border-robot-blue bg-robot-blue text-white shadow-glow" : "border-white/10 bg-robot-night/60 text-robot-silver hover:border-robot-blue/50"
+                    )}
+                  >
+                    <span className="inline-flex items-center gap-3 text-sm font-black uppercase tracking-[0.14em]">
+                      <Icon className="h-4 w-4" />
+                      {item.label}
+                    </span>
+                    <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-black">{item.count}</span>
+                  </button>
+                );
+              })}
             </div>
-            <p className="mt-3 text-sm text-robot-muted">
-              Showing {filteredReservations.length} of {reservations.length} reservations{searchQuery ? ` for "${searchQuery}"` : ""}.
-            </p>
-          </form>
+
+            <form onSubmit={submitSearch} className="mt-5">
+              <label htmlFor="reservationSearch" className="text-sm font-black uppercase tracking-[0.18em] text-robot-gold">
+                Search reservation
+              </label>
+              <div className="mt-3 grid gap-3 lg:grid-cols-[1fr_auto_auto]">
+                <div className="relative">
+                  <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-robot-muted" />
+                  <input
+                    id="reservationSearch"
+                    value={searchInput}
+                    onChange={(event) => setSearchInput(event.target.value)}
+                    placeholder="Search by name, code, phone, email, status, branch, notes..."
+                    className="focus-ring min-h-14 w-full rounded-2xl border border-white/10 bg-robot-night/70 py-3 pl-12 pr-4 text-white placeholder:text-robot-muted"
+                  />
+                </div>
+                <button type="submit" className="focus-ring inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-robot-blue px-5 text-sm font-black uppercase tracking-[0.14em] text-white shadow-glow hover:bg-[#2d96ff]">
+                  <Search className="h-4 w-4" />
+                  Search reservation
+                </button>
+                {searchQuery ? (
+                  <button type="button" onClick={clearSearch} className="focus-ring inline-flex min-h-14 items-center justify-center rounded-2xl border border-white/10 px-5 text-sm font-black text-robot-silver hover:border-robot-blue">
+                    Clear
+                  </button>
+                ) : null}
+              </div>
+              <p className="mt-3 text-sm text-robot-muted">
+                Showing {filteredReservations.length} of {basketReservations.length} {basket === "history" ? "completed history" : "ongoing"} reservations{searchQuery ? ` for "${searchQuery}"` : ""}.
+              </p>
+            </form>
+          </div>
         ) : null}
 
         {status === "loading" ? (
@@ -220,9 +258,13 @@ export default function AdminReservationsPage() {
 
         {status !== "loading" && reservations.length > 0 && filteredReservations.length === 0 ? (
           <div className="mt-8 rounded-3xl border border-white/10 bg-white/[0.04] p-8 text-center">
-            <Search className="mx-auto h-10 w-10 text-robot-blue" />
-            <h2 className="mt-4 font-display text-2xl font-bold text-white">No matching reservations</h2>
-            <p className="mt-3 text-robot-muted">Try a guest name, phone number, email address, confirmation code, branch, or status.</p>
+            {basket === "history" && !searchQuery ? <History className="mx-auto h-10 w-10 text-robot-blue" /> : <Search className="mx-auto h-10 w-10 text-robot-blue" />}
+            <h2 className="mt-4 font-display text-2xl font-bold text-white">{basket === "history" && !searchQuery ? "No completed visits yet" : "No matching reservations"}</h2>
+            <p className="mt-3 text-robot-muted">
+              {basket === "history" && !searchQuery
+                ? "When staff mark a visit as Completed, it will move here automatically."
+                : "Try a guest name, phone number, email address, confirmation code, branch, or status."}
+            </p>
           </div>
         ) : null}
 
@@ -262,20 +304,32 @@ export default function AdminReservationsPage() {
                 </div>
 
                 <div className="grid min-w-56 gap-2">
-                  <button onClick={() => updateStatus(reservation, "CONFIRMED")} disabled={Boolean(updatingId)} className="focus-ring inline-flex items-center justify-center gap-2 rounded-full bg-emerald-500 px-4 py-3 text-sm font-black text-white disabled:opacity-60">
-                    <CheckCircle2 className="h-4 w-4" />
-                    Confirm
-                  </button>
-                  <button onClick={() => updateStatus(reservation, "REJECTED")} disabled={Boolean(updatingId)} className="focus-ring inline-flex items-center justify-center gap-2 rounded-full border border-red-400/30 px-4 py-3 text-sm font-black text-red-100 hover:bg-red-500/10 disabled:opacity-60">
-                    <XCircle className="h-4 w-4" />
-                    Reject
-                  </button>
-                  <button onClick={() => updateStatus(reservation, "CANCELLED")} disabled={Boolean(updatingId)} className="focus-ring rounded-full border border-white/10 px-4 py-3 text-sm font-black text-white hover:border-robot-blue disabled:opacity-60">
-                    Cancel
-                  </button>
-                  <button onClick={() => updateStatus(reservation, "PENDING")} disabled={Boolean(updatingId)} className="focus-ring rounded-full border border-white/10 px-4 py-3 text-sm font-black text-robot-silver hover:border-robot-blue disabled:opacity-60">
-                    Mark Pending
-                  </button>
+                  {reservation.status !== "COMPLETED" ? (
+                    <>
+                      <button onClick={() => updateStatus(reservation, "COMPLETED")} disabled={Boolean(updatingId)} className="focus-ring inline-flex items-center justify-center gap-2 rounded-full bg-robot-gold px-4 py-3 text-sm font-black text-robot-night disabled:opacity-60">
+                        <CheckCircle2 className="h-4 w-4" />
+                        Completed
+                      </button>
+                      <button onClick={() => updateStatus(reservation, "CONFIRMED")} disabled={Boolean(updatingId)} className="focus-ring inline-flex items-center justify-center gap-2 rounded-full bg-emerald-500 px-4 py-3 text-sm font-black text-white disabled:opacity-60">
+                        <CheckCircle2 className="h-4 w-4" />
+                        Confirm
+                      </button>
+                      <button onClick={() => updateStatus(reservation, "REJECTED")} disabled={Boolean(updatingId)} className="focus-ring inline-flex items-center justify-center gap-2 rounded-full border border-red-400/30 px-4 py-3 text-sm font-black text-red-100 hover:bg-red-500/10 disabled:opacity-60">
+                        <XCircle className="h-4 w-4" />
+                        Reject
+                      </button>
+                      <button onClick={() => updateStatus(reservation, "CANCELLED")} disabled={Boolean(updatingId)} className="focus-ring rounded-full border border-white/10 px-4 py-3 text-sm font-black text-white hover:border-robot-blue disabled:opacity-60">
+                        Cancel
+                      </button>
+                      <button onClick={() => updateStatus(reservation, "PENDING")} disabled={Boolean(updatingId)} className="focus-ring rounded-full border border-white/10 px-4 py-3 text-sm font-black text-robot-silver hover:border-robot-blue disabled:opacity-60">
+                        Mark Pending
+                      </button>
+                    </>
+                  ) : (
+                    <button onClick={() => updateStatus(reservation, "PENDING")} disabled={Boolean(updatingId)} className="focus-ring rounded-full border border-white/10 px-4 py-3 text-sm font-black text-robot-silver hover:border-robot-blue disabled:opacity-60">
+                      Reopen to Ongoing
+                    </button>
+                  )}
                 </div>
               </div>
             </article>

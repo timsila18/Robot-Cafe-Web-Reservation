@@ -2,7 +2,7 @@ import { verifyReservationStaffToken } from "../_adminAuth.js";
 import { ensureBranches } from "../_branches.js";
 import { prisma } from "../_prisma.js";
 
-const editableStatuses = new Set(["PENDING", "CONFIRMED", "REJECTED", "CANCELLED", "CANCELLATION_REQUESTED", "MODIFICATION_REQUESTED"]);
+const editableStatuses = new Set(["PENDING", "CONFIRMED", "REJECTED", "CANCELLED", "COMPLETED", "CANCELLATION_REQUESTED", "MODIFICATION_REQUESTED"]);
 
 function parsePayload(req) {
   return typeof req.body === "string" ? JSON.parse(req.body) : req.body || {};
