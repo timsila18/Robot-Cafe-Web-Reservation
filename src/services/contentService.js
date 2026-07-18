@@ -48,15 +48,23 @@ function hasUploadedMedia(record, mediaKey = "media") {
 }
 
 function menuItemAsGalleryImage(item) {
+  const image = actualMenuImage(item);
   return {
     id: `menu-gallery-${item.id}`,
     title: item.title,
     category: item.category || "Food",
     featured: Boolean(item.featured || item.signature || item.popular),
-    src: item.imageUrl || item.image || item.src,
-    image: item.imageUrl || item.image || item.src,
+    src: image,
+    image,
     source: "menu",
   };
+}
+
+function actualMenuImage(item) {
+  const knownFallbacks = new Set(Object.values(mediaConfig.fallbackImages));
+  return [item.imageUrl, item.src, item.image]
+    .filter(Boolean)
+    .find((image) => !knownFallbacks.has(image)) || "";
 }
 
 function featuredFirst(items, limit) {
@@ -150,7 +158,7 @@ export function getGalleryItemsWithMenuFallback(menuItems = [], limit = 6) {
   }
 
   const menuPhotos = menuItems
-    .filter((item) => item.imageUrl || item.image || item.src)
+    .filter((item) => actualMenuImage(item))
     .map(menuItemAsGalleryImage);
   return featuredFirst(menuPhotos, limit);
 }
