@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { LockKeyhole, ShieldCheck, UserRoundCheck } from "lucide-react";
+import { Eye, EyeOff, LockKeyhole, ShieldCheck, UserRoundCheck } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +10,7 @@ export default function AccountLoginForm() {
   const navigate = useNavigate();
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const { register, handleSubmit } = useForm();
 
   async function onSubmit(data) {
@@ -54,7 +55,22 @@ export default function AccountLoginForm() {
           </label>
           <label className="grid gap-2 text-sm font-semibold text-robot-silver">
             Password *
-            <input className={inputClass} type="password" autoComplete="current-password" {...register("password", { required: true })} />
+            <span className="relative block">
+              <input
+                className={`${inputClass} w-full pr-14`}
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                {...register("password", { required: true })}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((visible) => !visible)}
+                className="focus-ring absolute right-3 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full text-robot-silver transition hover:bg-white/10 hover:text-white"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              </button>
+            </span>
           </label>
         </div>
 

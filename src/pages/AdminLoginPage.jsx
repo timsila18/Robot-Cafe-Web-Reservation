@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { LockKeyhole, ShieldCheck } from "lucide-react";
+import { Eye, EyeOff, LockKeyhole, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { adminLogin } from "../services/surveyService";
@@ -11,6 +11,7 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const submit = async (event) => {
     event.preventDefault();
@@ -58,13 +59,23 @@ export default function AdminLoginPage() {
         </label>
         <label className="mt-4 block">
           <span className="text-sm font-bold text-robot-silver">Password</span>
-          <input
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            type="password"
-            required
-            className="focus-ring mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-white"
-          />
+          <span className="relative mt-2 block">
+            <input
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              type={showPassword ? "text" : "password"}
+              required
+              className="focus-ring w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-4 pr-14 text-white"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((visible) => !visible)}
+              className="focus-ring absolute right-3 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full text-robot-silver transition hover:bg-white/10 hover:text-white"
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+            </button>
+          </span>
         </label>
 
         {error ? <p className="mt-4 rounded-2xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-200">{error}</p> : null}
