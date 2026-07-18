@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowLeft, CalendarDays, CheckCircle2, History, Loader2, LogOut, MapPin, RefreshCw, Search, XCircle } from "lucide-react";
+import { ArrowLeft, CalendarDays, CheckCircle2, Download, History, Loader2, LogOut, MapPin, RefreshCw, Search, XCircle } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BrandLogo from "../components/BrandLogo";
@@ -64,6 +64,101 @@ function searchableReservationText(reservation) {
     .filter(Boolean)
     .join(" ")
     .toLowerCase();
+}
+
+function excelEscape(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+function formatExportDate(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "" : date.toLocaleDateString("en-KE");
+}
+
+function formatExportDateTime(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "" : date.toLocaleString("en-KE");
+}
+
+function reservationExportRows(reservations) {
+  return reservations.map((reservation) => ({
+    "Confirmation Number": reservation.confirmationNumber,
+    Status: reservation.status?.replaceAll("_", " "),
+    Basket: reservation.status === "COMPLETED" ? "History" : "Ongoing",
+    Branch: reservation.branch?.name || reservation.branchId,
+    "Branch Short Name": reservation.branch?.shortName || "",
+    "Reservation Date": formatExportDate(reservation.date),
+    "Time Slot": reservation.selectedTime,
+    Guests: reservation.guests,
+    "First Name": reservation.customer?.firstName || "",
+    "Last Name": reservation.customer?.lastName || "",
+    "Guest Name": guestName(reservation.customer),
+    Phone: reservation.customer?.phone || "",
+    Email: reservation.customer?.email || "",
+    Preferences: (reservation.preferences || []).join(", "),
+    "Customer Details / Special Requests": reservation.notes || "",
+    Source: reservation.source || "website",
+    "Reservation Inbox": reservation.routingInbox || "",
+    "Received At": formatExportDateTime(reservation.createdAt),
+    "Last Updated": formatExportDateTime(reservation.updatedAt),
+  }));
+}
+
+function downloadExcelReport(reservations, staff) {
+  const rows = reservationExportRows(reservations);
+  if (!rows.length) return false;
+
+  const columns = Object.keys(rows[0]);
+  const tableRows = rows
+    .map(
+      (row) =>
+        `<tr>${columns
+          .map((column) => `<td style="border:1px solid #d9e2ec;padding:8px;mso-number-format:'\\@';">${excelEscape(row[column])}</td>`)
+          .join("")}</tr>`
+    )
+    .join("");
+  const reportTitle = `${staff?.branchName || "All Branches"} Reservation Report`;
+  const generatedAt = new Date().toLocaleString("en-KE");
+  const html = `<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body { font-family: Arial, sans-serif; color: #050B12; }
+      h1 { color: #0A84FF; }
+      table { border-collapse: collapse; width: 100%; }
+      th { background: #050B12; color: #FFFFFF; border: 1px solid #0A84FF; padding: 9px; text-align: left; }
+    </style>
+  </head>
+  <body>
+    <h1>${excelEscape(reportTitle)}</h1>
+    <p>Generated: ${excelEscape(generatedAt)}</p>
+    <p>Total reservations: ${rows.length}</p>
+    <table>
+      <thead><tr>${columns.map((column) => `<th>${excelEscape(column)}</th>`).join("")}</tr></thead>
+      <tbody>${tableRows}</tbody>
+    </table>
+  </body>
+</html>`;
+
+  const blob = new Blob([html], { type: "application/vnd.ms-excel;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  const dateStamp = new Date().toISOString().slice(0, 10);
+  const branchSlug = (staff?.branchName || "all-branches").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  link.href = url;
+  link.download = `robot-cafe-reservations-${branchSlug}-${dateStamp}.xls`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+  return true;
 }
 
 export default function AdminReservationsPage() {
@@ -144,6 +239,11 @@ export default function AdminReservationsPage() {
     setSearchQuery("");
   };
 
+  const exportReservations = () => {
+    const exported = downloadExcelReport(reservations, staff);
+    if (!exported) setError("There are no reservations available to export yet.");
+  };
+
   return (
     <section className="px-5 py-10 sm:py-16">
       <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="mx-auto max-w-7xl">
@@ -160,6 +260,10 @@ export default function AdminReservationsPage() {
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
+            <button onClick={exportReservations} disabled={status === "loading" || reservations.length === 0} className="focus-ring inline-flex items-center justify-center gap-2 rounded-full border border-robot-gold/40 px-5 py-3 text-sm font-black text-robot-gold hover:bg-robot-gold hover:text-robot-night disabled:cursor-not-allowed disabled:opacity-50">
+              <Download className="h-4 w-4" />
+              Export Excel
+            </button>
             <button onClick={loadReservations} className="focus-ring inline-flex items-center justify-center gap-2 rounded-full border border-white/10 px-5 py-3 text-sm font-black text-white hover:border-robot-blue">
               <RefreshCw className="h-4 w-4" />
               Refresh
